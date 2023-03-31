@@ -17,6 +17,18 @@ public abstract class PredicateToValue<T, R> implements FunctionMaker<T, R> {
         this.secondary = secondary;
     }
 
+    public PredicateMaker<T> getPredicate() {
+        return predicate;
+    }
+
+    public R getPrimary() {
+        return primary;
+    }
+
+    public R getSecondary() {
+        return secondary;
+    }
+
     @Override
     public Function<T, R> make() {
         return o -> this.predicate.make().test(o) ? this.primary : this.secondary;

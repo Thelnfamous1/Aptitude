@@ -13,10 +13,10 @@ import net.minecraft.world.entity.ai.village.poi.PoiType;
 
 import java.util.Optional;
 
-public record PathfinderAcquirePoiMaker(PredicateMaker<Holder<PoiType>> poiPredicate, MemoryModuleType<GlobalPos> poiMemory, MemoryModuleType<GlobalPos> secondaryPoiMemory, boolean requireAdult, Optional<Byte> eventId) implements BehaviorMaker {
+public record PathfinderAcquirePoiMaker(PredicateMaker<Holder<PoiType>> poiPredicate, MemoryModuleType<GlobalPos> poiMemory, MemoryModuleType<GlobalPos> secondaryPoiMemory, boolean requireAdult, Optional<Byte> entityEventId) implements BehaviorMaker {
     @Override
     public BehaviorControl<?> make() {
-        return AcquirePoi.create(this.poiPredicate.make(), this.poiMemory, this.secondaryPoiMemory, this.requireAdult, this.eventId);
+        return AcquirePoi.create(this.poiPredicate.make(), this.poiMemory, this.secondaryPoiMemory, this.requireAdult, this.entityEventId);
     }
 
     @Override

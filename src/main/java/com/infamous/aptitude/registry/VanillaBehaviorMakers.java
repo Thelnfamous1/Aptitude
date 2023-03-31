@@ -27,7 +27,6 @@ import com.infamous.aptitude.logic.biconsumer.BiConsumerMaker;
 import com.infamous.aptitude.logic.bipredicate.BiPredicateMaker;
 import com.infamous.aptitude.logic.function.FunctionMaker;
 import com.infamous.aptitude.logic.predicate.PredicateMaker;
-import com.infamous.aptitude.registry.AptitudeRegistries;
 import com.infamous.aptitude.util.CodecUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -330,7 +329,7 @@ public class VanillaBehaviorMakers {
                     CodecUtil.defineFieldUnchecked(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec(), "poi_memory", PathfinderAcquirePoiMaker::poiMemory),
                     CodecUtil.defineFieldUnchecked(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec(), "secondary_poi_memory", PathfinderAcquirePoiMaker::secondaryPoiMemory),
                     CodecUtil.defineField(Codec.BOOL, "require_adult", PathfinderAcquirePoiMaker::requireAdult),
-                    Codec.BYTE.optionalFieldOf("event_id").forGetter(PathfinderAcquirePoiMaker::eventId)
+                    CodecUtil.defineOptionalField(Codec.BYTE, "entity_event_id", PathfinderAcquirePoiMaker::entityEventId)
             ).apply(b, PathfinderAcquirePoiMaker::new)));
 
     public static final RegistryObject<Codec<PathfinderFollowTemptationMaker>> PATHFINDER_FOLLOW_TEMPTATION = register("pathfinder_follow_temptation",

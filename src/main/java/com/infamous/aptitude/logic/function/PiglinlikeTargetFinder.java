@@ -20,9 +20,9 @@ public record PiglinlikeTargetFinder(PredicateMaker<LivingEntity> selfPredicate,
         if (selfPredicate.test(entity)) {
             return Optional.empty();
         } else {
-            Optional<LivingEntity> entityFromUUID = BehaviorUtils.getLivingEntityFromUUIDMemory(entity, primaryTargetMemory);
-            if (entityFromUUID.isPresent() && Sensor.isEntityAttackableIgnoringLineOfSight(entity, entityFromUUID.get())) {
-                return entityFromUUID;
+            Optional<LivingEntity> primaryTarget = BehaviorUtils.getLivingEntityFromUUIDMemory(entity, primaryTargetMemory);
+            if (primaryTarget.isPresent() && Sensor.isEntityAttackableIgnoringLineOfSight(entity, primaryTarget.get())) {
+                return primaryTarget;
             } else {
                 if (brain.hasMemoryValue(secondaryTargetEnabledMemory)) {
                     Optional<? extends LivingEntity> secondaryTarget = brain.getMemory(secondaryTargetMemory);
