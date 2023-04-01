@@ -7,6 +7,11 @@ import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.behavior.LookAtTargetSink;
 
 public record MobLookAtTargetSinkMaker(int minDuration, int maxDuration) implements BehaviorMaker {
+
+    public static MobLookAtTargetSinkMaker simple(){
+        return new MobLookAtTargetSinkMaker(45, 90);
+    }
+
     @Override
     public BehaviorControl<?> make() {
         return new LookAtTargetSink(this.minDuration, this.maxDuration);

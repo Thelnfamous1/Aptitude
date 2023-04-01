@@ -3,6 +3,7 @@ package com.infamous.aptitude.codec;
 import com.infamous.aptitude.behavior.BehaviorMaker;
 import com.infamous.aptitude.logic.predicate.PredicateMaker;
 import com.infamous.aptitude.mixin.TargetingConditionsAccessor;
+import com.infamous.aptitude.mixin.TickerAccessor;
 import com.infamous.aptitude.util.CodecUtil;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -10,9 +11,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.UnboundedMapCodec;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.GateBehavior;
+import net.minecraft.world.entity.ai.behavior.SetEntityLookTargetSometimes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.sensing.SensorType;
@@ -33,10 +36,10 @@ public class CustomCodecs {
             CodecUtil.defineField(Codec.BOOL, "check_line_of_sight", tc -> ((TargetingConditionsAccessor)tc).getCheckLineOfSight()),
             CodecUtil.defineField(Codec.BOOL, "test_invisible", tc -> ((TargetingConditionsAccessor)tc).getTestInvisible()),
             CodecUtil.defineOptionalFieldUnchecked(PredicateMaker.DIRECT_CODEC, "selector", tc -> Optional.empty()) // TargetingConditions don't store a PredicateMaker
-            ).apply(instance, (isCombat, range, checkLineOfSight, testInvisible, selector) -> makeTargetingConditions(isCombat, range, checkLineOfSight, testInvisible, (PredicateMaker<LivingEntity>) selector.orElse(null))));
+            ).apply(instance, (isCombat, range, checkLineOfSight, testInvisible, selector) -> makeTargetingConditions(isCombat, range, checkLineOfSight, testInvisible, selector.map(PredicateMaker.class::cast).orElse(null))));
     public static final Codec<List<Pair<BehaviorMaker, Integer>>> WEIGHTED_BEHAVIORS = Codec.compoundList(BehaviorMaker.DIRECT_CODEC, Codec.INT);
     public static final Codec<List<Pair<Integer, BehaviorMaker>>> PRIORITIZED_BEHAVIORS = Codec.compoundList(Codec.INT, BehaviorMaker.DIRECT_CODEC);
-    public static final Codec<Set<MemoryModuleType<?>>> MEMORY_SET = set(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec());
+    public static final Codec<Set<MemoryModuleType<?>>> MEMORY_SET = new SetCodec<>(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec());
     public static final Codec<MemoryStatus> MEMORY_STATUS = new EnumCodec<>(MemoryStatus.class);
     public static final UnboundedMapCodec<MemoryModuleType<?>, MemoryStatus> MEMORY_TO_STATUS_MAP = Codec.unboundedMap(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec(), MEMORY_STATUS);
     public static final Codec<GateBehavior.OrderPolicy> ORDER_POLICY = new EnumCodec<>(GateBehavior.OrderPolicy.class);
@@ -47,9 +50,11 @@ public class CustomCodecs {
     public static final Codec<Set<Pair<MemoryModuleType<?>, MemoryStatus>>> ACTIVITY_REQUIREMENTS = new CompoundSetCodec<>(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec(), MEMORY_STATUS);
     public static final Codec<List<Integer>> INTEGER_LIST = Codec.list(Codec.INT);
 
-    public static <E> Codec<Set<E>> set(final Codec<E> elementCodec) {
-        return new SetCodec<>(elementCodec);
-    }
+    public static final Codec<SetEntityLookTargetSometimes.Ticker> TICKER = RecordCodecBuilder.create(instance -> instance
+            .group(
+                    CodecUtil.defineField(UniformInt.CODEC, "interval", t -> ((TickerAccessor)(Object)t).getInterval()))
+            .apply(instance, SetEntityLookTargetSometimes.Ticker::new)
+    );
 
     private static TargetingConditions makeTargetingConditions(boolean isCombat, double range, boolean checkLineOfSight, boolean testInvisible, @Nullable PredicateMaker<LivingEntity> selector){
         TargetingConditions targetingConditions = isCombat ? TargetingConditions.forCombat() : TargetingConditions.forNonCombat();

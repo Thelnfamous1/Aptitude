@@ -7,6 +7,9 @@ import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.behavior.MoveToTargetSink;
 
 public record MobMoveToTargetSinkMaker(int minDuration, int maxDuration) implements BehaviorMaker {
+    public static MobMoveToTargetSinkMaker simple(){
+        return new MobMoveToTargetSinkMaker(150, 250);
+    }
     @Override
     public BehaviorControl<?> make() {
         return new MoveToTargetSink(this.minDuration, this.maxDuration);

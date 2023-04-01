@@ -8,8 +8,10 @@ import net.minecraft.core.RegistryCodecs;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.util.ExtraCodecs;
 
+import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public interface BiPredicateMaker<T, U> {
     Codec<BiPredicateMaker<?, ?>> DIRECT_CODEC = ExtraCodecs.lazyInitializedCodec(() -> AptitudeRegistries.BIPREDICATE_MAKER_SERIALIZERS.get().getCodec())
@@ -22,4 +24,8 @@ public interface BiPredicateMaker<T, U> {
     BiPredicate<T, U> make();
 
     Codec<? extends BiPredicateMaker<T, U>> getCodec();
+
+    static <T, U> List<BiPredicate<T, U>> makeList(List<BiPredicateMaker<T, U>> biPredicateMakers){
+        return biPredicateMakers.stream().map(BiPredicateMaker::make).collect(Collectors.toList());
+    }
 }

@@ -4,6 +4,7 @@ import com.infamous.aptitude.Aptitude;
 import com.infamous.aptitude.brain.BrainModifier;
 import com.infamous.aptitude.brain.stock.*;
 import com.infamous.aptitude.codec.CustomCodecs;
+import com.infamous.aptitude.codec.SetCodec;
 import com.infamous.aptitude.util.CodecUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -17,6 +18,20 @@ public class AptitudeBrainModifiers {
 
     private static final DeferredRegister<Codec<? extends BrainModifier>> BRAIN_MODIFIER_SERIALIZERS =
             DeferredRegister.create(AptitudeRegistries.Keys.BRAIN_MODIFIER_SERIALIZERS_KEY, Aptitude.MODID);
+
+    public static final RegistryObject<Codec<NoneBrainModifier>> NONE = BRAIN_MODIFIER_SERIALIZERS.register("none",
+            () -> Codec.unit(NoneBrainModifier.INSTANCE));
+
+    public static final RegistryObject<Codec<MakeBrainModifier>> MAKE_BRAIN = register("make_brain", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    CodecUtil.defineField(Codec.BOOL, "replace", MakeBrainModifier::replace),
+                    CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", MakeBrainModifier::entityTypes),
+                    CodecUtil.defineFieldUnchecked(Codec.unboundedMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.PRIORITIZED_BEHAVIORS), "prioritized_behaviors", MakeBrainModifier::prioritizedBehaviors),
+                    CodecUtil.defineField(Codec.unboundedMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.ACTIVITY_REQUIREMENTS), "activity_requirements", MakeBrainModifier::activityRequirements),
+                    CodecUtil.defineField(Codec.unboundedMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.MEMORY_SET), "activity_memories_to_erase_when_stopped", MakeBrainModifier::activityMemoriesToEraseWhenStopped),
+                    CodecUtil.defineField(new SetCodec<>(ForgeRegistries.ACTIVITIES.getCodec()), "core_activities", MakeBrainModifier::coreActivities),
+                    CodecUtil.defineField(ForgeRegistries.ACTIVITIES.getCodec(), "default_activity", MakeBrainModifier::defaultActivity)
+            ).apply(builder, MakeBrainModifier::new)));
 
     public static final RegistryObject<Codec<AddMemoryTypesModifier>> ADD_MEMORY_TYPES = register("add_memory_types", () ->
             RecordCodecBuilder.create(builder -> builder.group(
