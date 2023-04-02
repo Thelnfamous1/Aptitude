@@ -1,5 +1,6 @@
 package com.infamous.aptitude.logic.predicate;
 
+import com.infamous.aptitude.registry.AptitudePredicateMakers;
 import com.mojang.serialization.Codec;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +15,6 @@ public class ItemIsCrossbow implements PredicateMaker<ItemStack> {
 
     @Override
     public Codec<? extends PredicateMaker<ItemStack>> getCodec() {
-        return null;
+        return AptitudePredicateMakers.ITEM_IS_CROSSBOW.get();
     }
 }

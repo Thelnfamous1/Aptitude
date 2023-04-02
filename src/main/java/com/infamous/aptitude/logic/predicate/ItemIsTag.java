@@ -1,5 +1,6 @@
 package com.infamous.aptitude.logic.predicate;
 
+import com.infamous.aptitude.registry.AptitudePredicateMakers;
 import com.mojang.serialization.Codec;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -15,6 +16,6 @@ public record ItemIsTag(TagKey<Item> itemTag) implements PredicateMaker<ItemStac
 
     @Override
     public Codec<? extends PredicateMaker<ItemStack>> getCodec() {
-        return null;
+        return AptitudePredicateMakers.ITEM_IS_TAG.get();
     }
 }

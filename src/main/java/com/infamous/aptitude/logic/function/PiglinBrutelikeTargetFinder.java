@@ -10,10 +10,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
-public record PiglinBrutelikeTargetFinder(MemoryModuleType<UUID> primaryTargetMemory, MemoryModuleType<? extends LivingEntity> secondaryTargetMemory, int secondaryTargetCloseEnough, MemoryModuleType<? extends LivingEntity> tertiaryTargetMemory) implements FunctionMaker<LivingEntity, Optional<? extends LivingEntity>> {
+public record PiglinBrutelikeTargetFinder(MemoryModuleType<UUID> primaryTargetUuidMemory, MemoryModuleType<? extends LivingEntity> secondaryTargetMemory, int secondaryTargetCloseEnough, MemoryModuleType<? extends LivingEntity> tertiaryTargetMemory) implements FunctionMaker<LivingEntity, Optional<? extends LivingEntity>> {
 
-    private static Optional<? extends LivingEntity> findNearestValidAttackTarget(LivingEntity entity, MemoryModuleType<UUID> primaryTargetMemory, MemoryModuleType<? extends LivingEntity> entityMemory, int closeEnough, MemoryModuleType<? extends LivingEntity> tertiaryTargetMemory) {
-        Optional<LivingEntity> primaryTarget = BehaviorUtils.getLivingEntityFromUUIDMemory(entity, primaryTargetMemory);
+    private static Optional<? extends LivingEntity> findNearestValidAttackTarget(LivingEntity entity, MemoryModuleType<UUID> primaryTargetUuidMemory, MemoryModuleType<? extends LivingEntity> entityMemory, int closeEnough, MemoryModuleType<? extends LivingEntity> tertiaryTargetMemory) {
+        Optional<LivingEntity> primaryTarget = BehaviorUtils.getLivingEntityFromUUIDMemory(entity, primaryTargetUuidMemory);
         if (primaryTarget.isPresent() && Sensor.isEntityAttackableIgnoringLineOfSight(entity, primaryTarget.get())) {
             return primaryTarget;
         } else {
@@ -24,7 +24,7 @@ public record PiglinBrutelikeTargetFinder(MemoryModuleType<UUID> primaryTargetMe
 
     @Override
     public Function<LivingEntity, Optional<? extends LivingEntity>> make() {
-        return le -> findNearestValidAttackTarget(le, this.primaryTargetMemory, this.secondaryTargetMemory, this.secondaryTargetCloseEnough, this.tertiaryTargetMemory);
+        return le -> findNearestValidAttackTarget(le, this.primaryTargetUuidMemory, this.secondaryTargetMemory, this.secondaryTargetCloseEnough, this.tertiaryTargetMemory);
     }
 
     @Override

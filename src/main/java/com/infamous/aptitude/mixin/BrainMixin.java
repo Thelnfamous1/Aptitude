@@ -3,6 +3,7 @@ package com.infamous.aptitude.mixin;
 import com.google.common.collect.ImmutableList;
 import com.infamous.aptitude.brain.ModifiableBrainInfoProvider;
 import com.infamous.aptitude.brain.ModifiableBrainInfo;
+import com.mojang.serialization.Codec;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -21,8 +22,8 @@ public abstract class BrainMixin<E extends LivingEntity> implements ModifiableBr
     private ModifiableBrainInfo<E> modifiableBrainInfo;
 
     @Inject(at = @At("TAIL"), method = "<init>")
-    private void handleConstruction(Collection<MemoryModuleType<?>> memories, Collection<SensorType<Sensor<? super E>>> sensors, ImmutableList memoryValues, Supplier codecSupplier, CallbackInfo ci){
-        this.modifiableBrainInfo = new ModifiableBrainInfo<>(new ModifiableBrainInfo.BrainInfo<E>(memories, sensors));
+    private void handleConstruction(Collection<MemoryModuleType<?>> memories, Collection<SensorType<Sensor<? super E>>> sensors, ImmutableList<?> memoryValues, Supplier<Codec<Brain<E>>> codecSupplier, CallbackInfo ci){
+        this.modifiableBrainInfo = new ModifiableBrainInfo<>(new ModifiableBrainInfo.BrainInfo<>(memories, sensors));
     }
 
     @Override

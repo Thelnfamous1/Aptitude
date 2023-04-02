@@ -1,8 +1,8 @@
 package com.infamous.aptitude.logic.function.util;
 
 import com.infamous.aptitude.logic.function.FunctionMaker;
+import com.infamous.aptitude.registry.AptitudeFunctionMakers;
 import com.mojang.serialization.Codec;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.util.function.Function;
 
@@ -14,6 +14,6 @@ public record ToFloat<T>(float value) implements FunctionMaker<T, Float> {
 
     @Override
     public Codec<? extends FunctionMaker<T, Float>> getCodec() {
-        return null;
+        return (Codec<? extends FunctionMaker<T, Float>>) (Codec<?>) AptitudeFunctionMakers.TO_FLOAT.get();
     }
 }

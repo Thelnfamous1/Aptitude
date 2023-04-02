@@ -2,6 +2,7 @@ package com.infamous.aptitude.behavior.custom;
 
 import com.infamous.aptitude.behavior.BehaviorMaker;
 import com.infamous.aptitude.logic.bipredicate.BiPredicateMaker;
+import com.infamous.aptitude.registry.AptitudeBehaviorMakers;
 import com.mojang.serialization.Codec;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
@@ -48,6 +49,6 @@ public record CustomSetEntityLookTargetMaker(BiPredicateMaker<LivingEntity, Livi
 
     @Override
     public Codec<? extends BehaviorMaker> getCodec() {
-        return null;
+        return AptitudeBehaviorMakers.SET_ENTITY_LOOK_TARGET.get();
     }
 }

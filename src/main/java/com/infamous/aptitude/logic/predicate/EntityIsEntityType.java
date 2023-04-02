@@ -1,7 +1,7 @@
 package com.infamous.aptitude.logic.predicate;
 
+import com.infamous.aptitude.registry.AptitudePredicateMakers;
 import com.mojang.serialization.Codec;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 
@@ -15,6 +15,6 @@ public record EntityIsEntityType(EntityType<?> entityType) implements PredicateM
 
     @Override
     public Codec<? extends PredicateMaker<Entity>> getCodec() {
-        return null;
+        return AptitudePredicateMakers.ENTITY_IS_ENTITY_TYPE.get();
     }
 }

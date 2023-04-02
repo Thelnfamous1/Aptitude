@@ -14,13 +14,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
-public record AllaylikePlayerTracker(MemoryModuleType<UUID> uuidMemory, int closeEnough) implements FunctionMaker<LivingEntity, Optional<PositionTracker>> {
+public record AllaylikePlayerTracker(MemoryModuleType<UUID> playerUuidMemory, int closeEnough) implements FunctionMaker<LivingEntity, Optional<PositionTracker>> {
 
-    private static Optional<PositionTracker> getPlayerTracker(LivingEntity entity, MemoryModuleType<UUID> uuidMemory, int closeEnough) {
+    private static Optional<PositionTracker> getPlayerTracker(LivingEntity entity, MemoryModuleType<UUID> playerUuidMemory, int closeEnough) {
         Optional<ServerPlayer> result = Optional.empty();
         Level level = entity.getLevel();
         if (!level.isClientSide() && level instanceof ServerLevel serverlevel) {
-            Optional<UUID> optional = entity.getBrain().getMemory(uuidMemory);
+            Optional<UUID> optional = entity.getBrain().getMemory(playerUuidMemory);
             if (optional.isPresent()) {
                 Entity retrievedEntity = serverlevel.getEntity(optional.get());
                 if (retrievedEntity instanceof ServerPlayer serverPlayer) {
@@ -37,7 +37,7 @@ public record AllaylikePlayerTracker(MemoryModuleType<UUID> uuidMemory, int clos
 
     @Override
     public Function<LivingEntity, Optional<PositionTracker>> make() {
-        return entity -> getPlayerTracker(entity, this.uuidMemory, this.closeEnough);
+        return entity -> getPlayerTracker(entity, this.playerUuidMemory, this.closeEnough);
     }
 
     @Override

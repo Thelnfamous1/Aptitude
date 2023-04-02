@@ -9,6 +9,12 @@ import javax.annotation.Nullable;
 import java.util.function.Function;
 
 public record GetTargetFlyPosition(int maxXZDistance, int maxYDistance, int yOffset) implements FunctionMaker<PathfinderMob, Vec3> {
+    private static final int MAX_XZ_DIST = 10;
+    private static final int MAX_Y_DIST = 7;
+
+    public static GetTargetFlyPosition simple(){
+        return new GetTargetFlyPosition(MAX_XZ_DIST, MAX_Y_DIST, -2);
+    }
 
     @Nullable
     private static Vec3 getTargetFlyPos(PathfinderMob pathfinderMob, int maxXZDistance, int maxYDistance, int yOffset) {

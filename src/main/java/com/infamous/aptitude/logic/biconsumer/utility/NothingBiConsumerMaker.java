@@ -1,6 +1,7 @@
 package com.infamous.aptitude.logic.biconsumer.utility;
 
 import com.infamous.aptitude.logic.biconsumer.BiConsumerMaker;
+import com.infamous.aptitude.registry.AptitudeBiConsumerMakers;
 import com.mojang.serialization.Codec;
 
 import java.util.function.BiConsumer;
@@ -13,6 +14,6 @@ public record NothingBiConsumerMaker<T, U>() implements BiConsumerMaker<T, U> {
 
     @Override
     public Codec<? extends BiConsumerMaker<T, U>> getCodec() {
-        return null;
+        return (Codec<? extends BiConsumerMaker<T, U>>) (Codec<?>) AptitudeBiConsumerMakers.NOTHING.get();
     }
 }

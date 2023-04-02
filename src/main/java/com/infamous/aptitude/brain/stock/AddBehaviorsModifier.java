@@ -7,7 +7,6 @@ import com.infamous.aptitude.brain.BrainModifier;
 import com.infamous.aptitude.brain.ModifiableBrainInfo;
 import com.infamous.aptitude.mixin.BrainAccessor;
 import com.infamous.aptitude.registry.AptitudeBrainModifiers;
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
@@ -15,8 +14,6 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.schedule.Activity;
 
 import java.util.List;
@@ -25,17 +22,15 @@ import java.util.Set;
 
 public record AddBehaviorsModifier(HolderSet<EntityType<?>> entityTypes, Activity activity, List<Pair<Integer, ? extends BehaviorMaker>> prioritizedBehaviors) implements BrainModifier {
     @Override
-    public void modify(Holder<EntityType<?>> entityType, Either<Brain<?>, Brain.Provider<?>> brainOrProvider, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder) {
+    public void modify(Holder<EntityType<?>> entityType, Brain<?> brain, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder) {
         if(phase == Phase.ADD && this.entityTypes.contains(entityType)){
-            brainOrProvider.ifLeft(brain -> {
-                Map<Integer, Map<Activity, Set<BehaviorControl<?>>>> availableBehaviorsByPriority = ((BrainAccessor) brain).getAvailableBehaviorsByPriority();
-                for(Pair<Integer, ? extends BehaviorControl<?>> pair : BehaviorMaker.makePrioritizedBehaviors(this.prioritizedBehaviors)) {
-                    availableBehaviorsByPriority
-                            .computeIfAbsent(pair.getFirst(), (priority) -> Maps.newHashMap())
-                            .computeIfAbsent(this.activity, (activity) -> Sets.newLinkedHashSet())
-                            .add(pair.getSecond());
-                }
-            });
+            Map<Integer, Map<Activity, Set<BehaviorControl<?>>>> availableBehaviorsByPriority = ((BrainAccessor) brain).getAvailableBehaviorsByPriority();
+            for(Pair<Integer, ? extends BehaviorControl<?>> pair : BehaviorMaker.makePrioritizedBehaviors(this.prioritizedBehaviors)) {
+                availableBehaviorsByPriority
+                        .computeIfAbsent(pair.getFirst(), (priority) -> Maps.newHashMap())
+                        .computeIfAbsent(this.activity, (activity) -> Sets.newLinkedHashSet())
+                        .add(pair.getSecond());
+            }
         }
     }
 

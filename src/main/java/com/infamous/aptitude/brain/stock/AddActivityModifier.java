@@ -4,7 +4,6 @@ import com.infamous.aptitude.behavior.BehaviorMaker;
 import com.infamous.aptitude.brain.BrainModifier;
 import com.infamous.aptitude.brain.ModifiableBrainInfo;
 import com.infamous.aptitude.registry.AptitudeBrainModifiers;
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
@@ -20,11 +19,9 @@ import java.util.Set;
 
 public record AddActivityModifier(HolderSet<EntityType<?>> entityTypes, Activity activity, List<Pair<Integer, ? extends BehaviorMaker>> prioritizedBehaviors, Set<Pair<MemoryModuleType<?>, MemoryStatus>> activityRequirements, Set<MemoryModuleType<?>> activityMemoriesToEraseWhenStopped) implements BrainModifier {
     @Override
-    public void modify(Holder<EntityType<?>> entityType, Either<Brain<?>, Brain.Provider<?>> brainOrProvider, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder) {
+    public void modify(Holder<EntityType<?>> entityType, Brain<?> brain, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder) {
         if(phase == Phase.ADD && this.entityTypes.contains(entityType)){
-            brainOrProvider.ifLeft(brain -> {
-               brain.addActivityAndRemoveMemoriesWhenStopped(this.activity, BehaviorMaker.makePrioritizedBehaviors(this.prioritizedBehaviors), this.activityRequirements, this.activityMemoriesToEraseWhenStopped);
-            });
+            brain.addActivityAndRemoveMemoriesWhenStopped(this.activity, BehaviorMaker.makePrioritizedBehaviors(this.prioritizedBehaviors), this.activityRequirements, this.activityMemoriesToEraseWhenStopped);
         }
     }
 

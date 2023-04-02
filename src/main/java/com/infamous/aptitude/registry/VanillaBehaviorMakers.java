@@ -42,7 +42,7 @@ import java.util.function.Supplier;
 
 public class VanillaBehaviorMakers {
 
-    private static final DeferredRegister<Codec<? extends BehaviorMaker>> BEHAVIOR_MAKER_SERIALIZERS =
+    public static final DeferredRegister<Codec<? extends BehaviorMaker>> BEHAVIOR_MAKER_SERIALIZERS =
             DeferredRegister.create(AptitudeRegistries.Keys.BEHAVIOR_MAKER_SERIALIZERS_KEY, "minecraft");
 
     // AGEABLE
@@ -302,7 +302,7 @@ public class VanillaBehaviorMakers {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static final RegistryObject<Codec<MobStopAttackingIfTargetInvalidMaker>> MOB_STOP_ATTACKING_IF_TARGET_INVALID = register("mob_stop_attacking_if_target_invalid",
             () -> RecordCodecBuilder.create((b) -> b.group(
-                    CodecUtil.defineFieldUnchecked(PredicateMaker.DIRECT_CODEC, "target_predicate", MobStopAttackingIfTargetInvalidMaker::targetPredicate),
+                    CodecUtil.defineFieldUnchecked(PredicateMaker.DIRECT_CODEC, "stop_attacking_when", MobStopAttackingIfTargetInvalidMaker::stopAttackingWhen),
                     CodecUtil.defineFieldUnchecked(BiConsumerMaker.DIRECT_CODEC, "on_target_erased", MobStopAttackingIfTargetInvalidMaker::onTargetErased),
                     CodecUtil.defineField(Codec.BOOL, "can_tire", MobStopAttackingIfTargetInvalidMaker::canTire)
             ).apply(b, MobStopAttackingIfTargetInvalidMaker::new)));
@@ -438,7 +438,6 @@ public class VanillaBehaviorMakers {
     public static final RegistryObject<Codec<RingBellMaker>> RING_BELL = register("ring_bell",
             () -> Codec.unit(RingBellMaker::new));
 
-    @SuppressWarnings({"rawtypes"})
     public static final RegistryObject<Codec<RunOneMaker>> RUN_ONE = register("run_one",
             () -> RecordCodecBuilder.create((b) -> b.group(
                     CodecUtil.defineFieldUnchecked(CustomCodecs.MEMORY_TO_STATUS_MAP, "entry_condition", RunOneMaker::entryCondition),

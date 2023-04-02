@@ -1,5 +1,6 @@
 package com.infamous.aptitude.logic.predicate;
 
+import com.infamous.aptitude.registry.AptitudePredicateMakers;
 import com.mojang.serialization.Codec;
 import net.minecraft.world.item.ItemStack;
 
@@ -13,6 +14,6 @@ public record ItemIsEmpty() implements PredicateMaker<ItemStack> {
 
     @Override
     public Codec<? extends PredicateMaker<ItemStack>> getCodec() {
-        return null;
+        return AptitudePredicateMakers.ITEM_IS_EMPTY.get();
     }
 }

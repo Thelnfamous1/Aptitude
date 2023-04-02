@@ -1,5 +1,6 @@
 package com.infamous.aptitude.logic.predicate;
 
+import com.infamous.aptitude.registry.AptitudePredicateMakers;
 import com.mojang.serialization.Codec;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -13,6 +14,6 @@ public class EntityIsBaby implements PredicateMaker<LivingEntity> {
 
     @Override
     public Codec<? extends PredicateMaker<LivingEntity>> getCodec() {
-        return null;
+        return AptitudePredicateMakers.ENTITY_IS_BABY.get();
     }
 }

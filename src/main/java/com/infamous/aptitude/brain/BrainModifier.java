@@ -1,7 +1,6 @@
 package com.infamous.aptitude.brain;
 
 import com.infamous.aptitude.registry.AptitudeRegistries;
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -20,7 +19,7 @@ public interface BrainModifier {
     Codec<Holder<BrainModifier>> REFERENCE_CODEC = RegistryFileCodec.create(AptitudeRegistries.Keys.BRAIN_MODIFIERS, DIRECT_CODEC);
 
     Codec<HolderSet<BrainModifier>> LIST_CODEC = RegistryCodecs.homogeneousList(AptitudeRegistries.Keys.BRAIN_MODIFIERS, DIRECT_CODEC);
-    void modify(Holder<EntityType<?>> entityType, Either<Brain<?>, Brain.Provider<?>> brainOrProvider, BrainModifier.Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder);
+    void modify(Holder<EntityType<?>> entityType, Brain<?> brain, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder);
 
     Codec<? extends BrainModifier> getCodec();
 

@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 
 public class AptitudeBrainModifiers {
 
-    private static final DeferredRegister<Codec<? extends BrainModifier>> BRAIN_MODIFIER_SERIALIZERS =
+    public static final DeferredRegister<Codec<? extends BrainModifier>> BRAIN_MODIFIER_SERIALIZERS =
             DeferredRegister.create(AptitudeRegistries.Keys.BRAIN_MODIFIER_SERIALIZERS_KEY, Aptitude.MODID);
 
     public static final RegistryObject<Codec<NoneBrainModifier>> NONE = BRAIN_MODIFIER_SERIALIZERS.register("none",

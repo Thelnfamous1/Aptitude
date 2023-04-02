@@ -1,6 +1,7 @@
 package com.infamous.aptitude.logic.predicate.utility;
 
 import com.infamous.aptitude.logic.predicate.PredicateMaker;
+import com.infamous.aptitude.registry.AptitudePredicateMakers;
 import com.mojang.serialization.Codec;
 
 import java.util.List;
@@ -14,6 +15,6 @@ public record AllOfPredicateMaker<T>(List<PredicateMaker<T>> predicates) impleme
 
     @Override
     public Codec<? extends PredicateMaker<T>> getCodec() {
-        return null;
+        return (Codec<? extends PredicateMaker<T>>) (Codec<?>) AptitudePredicateMakers.ALL_OF.get();
     }
 }

@@ -2,7 +2,6 @@ package com.infamous.aptitude.brain;
 
 import com.infamous.aptitude.brain.util.MemoryTypesBuilder;
 import com.infamous.aptitude.brain.util.SensorTypesBuilder;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,6 +9,7 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,10 +50,12 @@ public class ModifiableBrainInfo<E extends LivingEntity> {
     }
 
     @ApiStatus.Internal
-    public void applyBrainModifiers(final Holder<EntityType<?>> entityType, final Either<Brain<?>, Brain.Provider<?>> brainOrProvider, final List<BrainModifier> brainModifiers)
+    public void applyBrainModifiers(final E entity, final Brain<?> brain, final List<BrainModifier> brainModifiers)
     {
         if (this.modifiedBrainInfo != null)
-            throw new IllegalStateException(String.format(Locale.ENGLISH, "%s already modified", brainOrProvider.map(b -> "Brain", p -> "Provider").toString()));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Brain for %s already modified", entity));
+
+       Holder<EntityType<?>> entityType = ForgeRegistries.ENTITY_TYPES.getHolder(entity.getType()).get();
 
         ModifiableBrainInfo.BrainInfo<E> original = this.getOriginalBrainInfo();
         final ModifiableBrainInfo.BrainInfo.Builder<E> builder = ModifiableBrainInfo.BrainInfo.Builder.copyOf(original);
@@ -61,7 +63,7 @@ public class ModifiableBrainInfo<E extends LivingEntity> {
         {
             for (BrainModifier modifier : brainModifiers)
             {
-                modifier.modify(entityType, brainOrProvider, phase, builder);
+                modifier.modify(entityType, brain, phase, builder);
             }
         }
         this.modifiedBrainInfo = builder.build();

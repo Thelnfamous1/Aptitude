@@ -15,11 +15,11 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public record AllaylikeGlobalPosTracker(MemoryModuleType<GlobalPos> globalPosMemory, PredicateMaker<LivingEntity> selfPredicate, PredicateMaker<BlockState> blockPredicate, boolean eraseMemoryOnFailure) implements FunctionMaker<LivingEntity, Optional<PositionTracker>>{
+public record AllaylikePoiTracker(MemoryModuleType<GlobalPos> poiMemory, PredicateMaker<LivingEntity> selfPredicate, PredicateMaker<BlockState> blockPredicate, boolean eraseMemoryOnFailure) implements FunctionMaker<LivingEntity, Optional<PositionTracker>>{
 
-    private static Optional<PositionTracker> getGlobalPositionTracker(LivingEntity entity, MemoryModuleType<GlobalPos> globalPosMemory, Predicate<LivingEntity> selfPredicate, Predicate<BlockState> blockPredicate, boolean eraseMemoryOnFailure) {
+    private static Optional<PositionTracker> getPoiTracker(LivingEntity entity, MemoryModuleType<GlobalPos> poiMemory, Predicate<LivingEntity> selfPredicate, Predicate<BlockState> blockPredicate, boolean eraseMemoryOnFailure) {
         Brain<?> brain = entity.getBrain();
-        Optional<GlobalPos> memory = brain.getMemory(globalPosMemory);
+        Optional<GlobalPos> memory = brain.getMemory(poiMemory);
         Optional<PositionTracker> result = Optional.empty();
         if (memory.isPresent()) {
             GlobalPos globalPos = memory.get();
@@ -27,7 +27,7 @@ public record AllaylikeGlobalPosTracker(MemoryModuleType<GlobalPos> globalPosMem
             if (level.dimension() == globalPos.dimension() && blockPredicate.test(level.getBlockState(globalPos.pos())) && selfPredicate.test(entity)) {
                 result = Optional.of(new BlockPosTracker(globalPos.pos().above()));
             } else if(eraseMemoryOnFailure){
-                brain.eraseMemory(globalPosMemory);
+                brain.eraseMemory(poiMemory);
             }
         }
         return result;
@@ -35,7 +35,7 @@ public record AllaylikeGlobalPosTracker(MemoryModuleType<GlobalPos> globalPosMem
 
     @Override
     public Function<LivingEntity, Optional<PositionTracker>> make() {
-        return entity -> getGlobalPositionTracker(entity, this.globalPosMemory, this.selfPredicate.make(), this.blockPredicate.make(), this.eraseMemoryOnFailure);
+        return entity -> getPoiTracker(entity, this.poiMemory, this.selfPredicate.make(), this.blockPredicate.make(), this.eraseMemoryOnFailure);
     }
 
     @Override

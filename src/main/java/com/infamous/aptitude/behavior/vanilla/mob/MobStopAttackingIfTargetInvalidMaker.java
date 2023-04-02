@@ -12,14 +12,14 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.behavior.StopAttackingIfTargetInvalid;
 
-public record MobStopAttackingIfTargetInvalidMaker<E extends Mob>(PredicateMaker<LivingEntity> targetPredicate, BiConsumerMaker<E, LivingEntity> onTargetErased, boolean canTire) implements BehaviorMaker {
+public record MobStopAttackingIfTargetInvalidMaker<E extends Mob>(PredicateMaker<LivingEntity> stopAttackingWhen, BiConsumerMaker<E, LivingEntity> onTargetErased, boolean canTire) implements BehaviorMaker {
 
-    public static <E extends Mob> MobStopAttackingIfTargetInvalidMaker<E> eraseOnly(BiConsumerMaker<E, LivingEntity> p_260165_) {
-        return new MobStopAttackingIfTargetInvalidMaker<>(new AlwaysFalse<>(), p_260165_, true);
+    public static <E extends Mob> MobStopAttackingIfTargetInvalidMaker<E> eraseOnly(BiConsumerMaker<E, LivingEntity> onTargetErased) {
+        return new MobStopAttackingIfTargetInvalidMaker<>(new AlwaysFalse<>(), onTargetErased, true);
     }
 
-    public static <E extends Mob> MobStopAttackingIfTargetInvalidMaker<E> predicateOnly(PredicateMaker<LivingEntity> p_259762_) {
-        return new MobStopAttackingIfTargetInvalidMaker<>(p_259762_, new NothingBiConsumerMaker<>(), true);
+    public static <E extends Mob> MobStopAttackingIfTargetInvalidMaker<E> predicateOnly(PredicateMaker<LivingEntity> stopAttackingWhen) {
+        return new MobStopAttackingIfTargetInvalidMaker<>(stopAttackingWhen, new NothingBiConsumerMaker<>(), true);
     }
 
     public static <E extends Mob> MobStopAttackingIfTargetInvalidMaker<E> simple() {
@@ -28,7 +28,7 @@ public record MobStopAttackingIfTargetInvalidMaker<E extends Mob>(PredicateMaker
 
     @Override
     public BehaviorControl<?> make() {
-        return StopAttackingIfTargetInvalid.create(this.targetPredicate.make(), this.onTargetErased.make(), this.canTire);
+        return StopAttackingIfTargetInvalid.create(this.stopAttackingWhen.make(), this.onTargetErased.make(), this.canTire);
     }
 
     @Override

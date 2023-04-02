@@ -1,5 +1,6 @@
 package com.infamous.aptitude.logic.predicate;
 
+import com.infamous.aptitude.registry.AptitudePredicateMakers;
 import com.mojang.serialization.Codec;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 
@@ -13,6 +14,6 @@ public class PiglinIsDancing implements PredicateMaker<Piglin>{
 
     @Override
     public Codec<? extends PredicateMaker<Piglin>> getCodec() {
-        return null;
+        return AptitudePredicateMakers.PIGLIN_IS_DANCING.get();
     }
 }

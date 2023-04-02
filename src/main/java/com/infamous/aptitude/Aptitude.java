@@ -6,7 +6,7 @@ import com.infamous.aptitude.logic.biconsumer.BiConsumerMaker;
 import com.infamous.aptitude.logic.bipredicate.BiPredicateMaker;
 import com.infamous.aptitude.logic.function.FunctionMaker;
 import com.infamous.aptitude.logic.predicate.PredicateMaker;
-import com.infamous.aptitude.registry.AptitudeRegistries;
+import com.infamous.aptitude.registry.*;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -21,7 +21,7 @@ public class Aptitude
     // Define mod id in a common place for everything to reference
     public static final String MODID = "aptitude";
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
     public Aptitude()
     {
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -35,5 +35,12 @@ public class Aptitude
             event.dataPackRegistry(AptitudeRegistries.Keys.FUNCTION_MAKERS, FunctionMaker.DIRECT_CODEC);
             event.dataPackRegistry(AptitudeRegistries.Keys.PREDICATE_MAKERS, PredicateMaker.DIRECT_CODEC);
         });
+
+        AptitudeBiConsumerMakers.BICONSUMER_MAKER_SERIALIZERS.register(modEventBus);
+        AptitudeBiPredicateMakers.BIPREDICATE_MAKER_SERIALIZERS.register(modEventBus);
+        AptitudeBrainModifiers.BRAIN_MODIFIER_SERIALIZERS.register(modEventBus);
+        AptitudeFunctionMakers.FUNCTION_MAKER_SERIALIZERS.register(modEventBus);
+        AptitudeBehaviorMakers.BEHAVIOR_MAKER_SERIALIZERS.register(modEventBus);
+        VanillaBehaviorMakers.BEHAVIOR_MAKER_SERIALIZERS.register(modEventBus);
     }
 }

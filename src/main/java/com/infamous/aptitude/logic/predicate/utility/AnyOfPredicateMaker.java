@@ -1,12 +1,13 @@
 package com.infamous.aptitude.logic.predicate.utility;
 
 import com.infamous.aptitude.logic.predicate.PredicateMaker;
+import com.infamous.aptitude.registry.AptitudePredicateMakers;
 import com.mojang.serialization.Codec;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-public record AnyOf<T>(List<PredicateMaker<T>> predicates) implements PredicateMaker<T>{
+public record AnyOfPredicateMaker<T>(List<PredicateMaker<T>> predicates) implements PredicateMaker<T>{
     @Override
     public Predicate<T> make() {
         return o -> PredicateMaker.makeList(this.predicates).stream().anyMatch(p -> p.test(o));
@@ -14,6 +15,6 @@ public record AnyOf<T>(List<PredicateMaker<T>> predicates) implements PredicateM
 
     @Override
     public Codec<? extends PredicateMaker<T>> getCodec() {
-        return null;
+        return (Codec<? extends PredicateMaker<T>>) (Codec<?>) AptitudePredicateMakers.ANY_OF.get();
     }
 }

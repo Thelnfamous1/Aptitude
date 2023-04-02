@@ -4,17 +4,16 @@ import com.infamous.aptitude.logic.bipredicate.BiPredicateMaker;
 import com.infamous.aptitude.registry.AptitudeBiPredicateMakers;
 import com.mojang.serialization.Codec;
 
-import java.util.List;
 import java.util.function.BiPredicate;
 
-public record AllOfBiPredicateMaker<T, U>(List<BiPredicateMaker<T, U>> biPredicates) implements BiPredicateMaker<T, U>{
+public record NegateBiPredicateMaker<T, U>(BiPredicateMaker<T, U> biPredicate) implements BiPredicateMaker<T, U> {
     @Override
     public BiPredicate<T, U> make() {
-        return (o1, o2) -> BiPredicateMaker.makeList(this.biPredicates).stream().allMatch(p -> p.test(o1, o2));
+        return this.biPredicate.make().negate();
     }
 
     @Override
     public Codec<? extends BiPredicateMaker<T, U>> getCodec() {
-        return (Codec<? extends BiPredicateMaker<T, U>>) (Codec<?>) AptitudeBiPredicateMakers.ALL_OF.get();
+        return (Codec<? extends BiPredicateMaker<T, U>>) (Codec<?>) AptitudeBiPredicateMakers.NEGATE.get();
     }
 }

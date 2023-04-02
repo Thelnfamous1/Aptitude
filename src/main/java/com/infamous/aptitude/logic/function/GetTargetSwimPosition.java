@@ -10,6 +10,12 @@ import java.util.function.Function;
 
 public record GetTargetSwimPosition(int[][] swimXYDistanceTiers) implements FunctionMaker<PathfinderMob, Vec3> {
 
+    private static final int[][] SWIM_XY_DISTANCE_TIERS = new int[][]{{1, 1}, {3, 3}, {5, 5}, {6, 5}, {7, 7}, {10, 7}};
+
+    public static GetTargetSwimPosition simple(){
+        return new GetTargetSwimPosition(SWIM_XY_DISTANCE_TIERS);
+    }
+
     private static Vec3 getTargetSwimPos(PathfinderMob mob, int[][] swimXYDistanceTiers) {
         Vec3 lastTargetSwimPos = null;
         Vec3 targetSwimPos = null;

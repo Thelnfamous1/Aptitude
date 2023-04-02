@@ -1,5 +1,6 @@
 package com.infamous.aptitude.logic.predicate;
 
+import com.infamous.aptitude.registry.AptitudePredicateMakers;
 import com.mojang.serialization.Codec;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
@@ -26,6 +27,6 @@ public record EntityIsNearEntityMemory(MemoryModuleType<LivingEntity> entityMemo
 
     @Override
     public Codec<? extends PredicateMaker<LivingEntity>> getCodec() {
-        return null;
+        return AptitudePredicateMakers.ENTITY_IS_NEAR_ENTITY_MEMORY.get();
     }
 }

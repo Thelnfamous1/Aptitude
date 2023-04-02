@@ -20,14 +20,13 @@ public record PathfinderRandomStrollMaker(float speedModifier, FunctionMaker<Pat
 
     private static final int MAX_XZ_DIST = 10;
     private static final int MAX_Y_DIST = 7;
-    private static final int[][] SWIM_XY_DISTANCE_TIERS = new int[][]{{1, 1}, {3, 3}, {5, 5}, {6, 5}, {7, 7}, {10, 7}};
 
-    public static PathfinderRandomStrollMaker stroll(float p_260304_) {
-        return stroll(p_260304_, true);
+    public static PathfinderRandomStrollMaker stroll(float speedModifier) {
+        return stroll(speedModifier, true);
     }
 
-    public static PathfinderRandomStrollMaker stroll(float p_260303_, boolean p_259639_) {
-        return new PathfinderRandomStrollMaker(p_260303_, new GetRandomLandPosition(MAX_XZ_DIST, MAX_Y_DIST), p_259639_ ? new AlwaysTrue<>() : new Negate(new EntityIsInWaterOrBubble()));
+    public static PathfinderRandomStrollMaker stroll(float speedModifier, boolean canSwim) {
+        return new PathfinderRandomStrollMaker(speedModifier, new GetRandomLandPosition(MAX_XZ_DIST, MAX_Y_DIST), canSwim ? new AlwaysTrue<>() : new Negate(new EntityIsInWaterOrBubble()));
     }
 
     public static PathfinderRandomStrollMaker stroll(float speedModifier, int maxXZDist, int maxYDist) {
@@ -35,11 +34,11 @@ public record PathfinderRandomStrollMaker(float speedModifier, FunctionMaker<Pat
     }
 
     public static PathfinderRandomStrollMaker fly(float speedModifier) {
-        return new PathfinderRandomStrollMaker(speedModifier, new GetTargetFlyPosition(MAX_XZ_DIST, MAX_Y_DIST, -2), new AlwaysTrue<>());
+        return new PathfinderRandomStrollMaker(speedModifier, GetTargetFlyPosition.simple(), new AlwaysTrue<>());
     }
 
     public static PathfinderRandomStrollMaker swim(float speedModifier) {
-        return new PathfinderRandomStrollMaker(speedModifier, new GetTargetSwimPosition(SWIM_XY_DISTANCE_TIERS), (PredicateMaker<PathfinderMob>) (Object) new EntityIsInWaterOrBubble());
+        return new PathfinderRandomStrollMaker(speedModifier, GetTargetSwimPosition.simple(), (PredicateMaker<PathfinderMob>) (Object) new EntityIsInWaterOrBubble());
     }
 
     @Override

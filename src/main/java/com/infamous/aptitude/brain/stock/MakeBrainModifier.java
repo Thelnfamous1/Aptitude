@@ -6,7 +6,6 @@ import com.infamous.aptitude.brain.BrainModifier;
 import com.infamous.aptitude.brain.ModifiableBrainInfo;
 import com.infamous.aptitude.mixin.BrainAccessor;
 import com.infamous.aptitude.registry.AptitudeBrainModifiers;
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
@@ -28,25 +27,23 @@ public record MakeBrainModifier(boolean replace, HolderSet<EntityType<?>> entity
                                 Set<Activity> coreActivities,
                                 Activity defaultActivity) implements BrainModifier {
     @Override
-    public void modify(Holder<EntityType<?>> entityType, Either<Brain<?>, Brain.Provider<?>> brainOrProvider, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder) {
+    public void modify(Holder<EntityType<?>> entityType, Brain<?> brain, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder) {
         if(phase == Phase.BEFORE_EVERYTHING && this.entityTypes.contains(entityType)){
-            brainOrProvider.ifLeft(brain -> {
-                if(this.replace){
-                    BrainAccessor brainAccessor = (BrainAccessor) brain;
-                    brainAccessor.getAvailableBehaviorsByPriority().clear();
-                    brainAccessor.getActivityRequirements().clear();
-                    brainAccessor.getActivityMemoriesToEraseWhenStopped().clear();
-                }
-                for(Activity activity : this.prioritizedBehaviors.keySet()){
-                    brain.addActivityAndRemoveMemoriesWhenStopped(activity,
-                            BehaviorMaker.makePrioritizedBehaviors(this.prioritizedBehaviors.get(activity)),
-                                    this.activityRequirements.getOrDefault(activity, ImmutableSet.of()),
-                                    this.activityMemoriesToEraseWhenStopped.getOrDefault(activity, ImmutableSet.of()));
-                }
-                brain.setCoreActivities(this.coreActivities);
-                brain.setDefaultActivity(this.defaultActivity);
-                brain.useDefaultActivity();
-            });
+            if(this.replace){
+                BrainAccessor<?> brainAccessor = (BrainAccessor<?>) brain;
+                brainAccessor.getAvailableBehaviorsByPriority().clear();
+                brainAccessor.getActivityRequirements().clear();
+                brainAccessor.getActivityMemoriesToEraseWhenStopped().clear();
+            }
+            for(Activity activity : this.prioritizedBehaviors.keySet()){
+                brain.addActivityAndRemoveMemoriesWhenStopped(activity,
+                        BehaviorMaker.makePrioritizedBehaviors(this.prioritizedBehaviors.get(activity)),
+                        this.activityRequirements.getOrDefault(activity, ImmutableSet.of()),
+                        this.activityMemoriesToEraseWhenStopped.getOrDefault(activity, ImmutableSet.of()));
+            }
+            brain.setCoreActivities(this.coreActivities);
+            brain.setDefaultActivity(this.defaultActivity);
+            brain.useDefaultActivity();
         }
     }
 

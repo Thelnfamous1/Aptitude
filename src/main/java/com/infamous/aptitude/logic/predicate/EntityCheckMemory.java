@@ -1,5 +1,6 @@
 package com.infamous.aptitude.logic.predicate;
 
+import com.infamous.aptitude.registry.AptitudePredicateMakers;
 import com.mojang.serialization.Codec;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -15,6 +16,6 @@ public record EntityCheckMemory(MemoryModuleType<?> memory, MemoryStatus status)
 
     @Override
     public Codec<? extends PredicateMaker<LivingEntity>> getCodec() {
-        return null;
+        return AptitudePredicateMakers.ENTITY_CHECK_MEMORY.get();
     }
 }

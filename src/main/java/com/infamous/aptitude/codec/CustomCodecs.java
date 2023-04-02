@@ -1,6 +1,7 @@
 package com.infamous.aptitude.codec;
 
 import com.infamous.aptitude.behavior.BehaviorMaker;
+import com.infamous.aptitude.logic.bipredicate.BiPredicateMaker;
 import com.infamous.aptitude.logic.predicate.PredicateMaker;
 import com.infamous.aptitude.mixin.TargetingConditionsAccessor;
 import com.infamous.aptitude.mixin.TickerAccessor;
@@ -13,6 +14,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.GateBehavior;
 import net.minecraft.world.entity.ai.behavior.SetEntityLookTargetSometimes;
@@ -49,6 +51,9 @@ public class CustomCodecs {
     public static final Codec<HolderSet<SensorType<?>>> SENSOR_TYPE_LIST = RegistryCodecs.homogeneousList(ForgeRegistries.Keys.SENSOR_TYPES);
     public static final Codec<Set<Pair<MemoryModuleType<?>, MemoryStatus>>> ACTIVITY_REQUIREMENTS = new CompoundSetCodec<>(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec(), MEMORY_STATUS);
     public static final Codec<List<Integer>> INTEGER_LIST = Codec.list(Codec.INT);
+    public static final Codec<List<BiPredicateMaker<?, ?>>> BIPREDICATE_MAKER_LIST = Codec.list(BiPredicateMaker.DIRECT_CODEC);
+    public static final Codec<List<PredicateMaker<?>>> PREDICATE_MAKER_LIST = Codec.list(PredicateMaker.DIRECT_CODEC);
+    public static final Codec<EquipmentSlot> EQUIPMENT_SLOT = new EnumCodec<>(EquipmentSlot.class);
 
     public static final Codec<SetEntityLookTargetSometimes.Ticker> TICKER = RecordCodecBuilder.create(instance -> instance
             .group(

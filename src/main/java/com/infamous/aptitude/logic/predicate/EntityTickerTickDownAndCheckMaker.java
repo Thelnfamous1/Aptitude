@@ -1,5 +1,6 @@
 package com.infamous.aptitude.logic.predicate;
 
+import com.infamous.aptitude.registry.AptitudePredicateMakers;
 import com.mojang.serialization.Codec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.behavior.SetEntityLookTargetSometimes;
@@ -15,6 +16,6 @@ public record EntityTickerTickDownAndCheckMaker(SetEntityLookTargetSometimes.Tic
 
     @Override
     public Codec<? extends PredicateMaker<Entity>> getCodec() {
-        return null;
+        return AptitudePredicateMakers.ENTITY_TICKER_TICK_DOWN_AND_CHECK.get();
     }
 }
