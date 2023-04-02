@@ -8,6 +8,7 @@ import com.infamous.aptitude.codec.SetCodec;
 import com.infamous.aptitude.util.CodecUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -26,9 +27,9 @@ public class AptitudeBrainModifiers {
             RecordCodecBuilder.create(builder -> builder.group(
                     CodecUtil.defineField(Codec.BOOL, "replace", MakeBrainModifier::replace),
                     CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", MakeBrainModifier::entityTypes),
-                    CodecUtil.defineFieldUnchecked(Codec.unboundedMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.PRIORITIZED_BEHAVIORS), "prioritized_behaviors", MakeBrainModifier::prioritizedBehaviors),
-                    CodecUtil.defineField(Codec.unboundedMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.ACTIVITY_REQUIREMENTS), "activity_requirements", MakeBrainModifier::activityRequirements),
-                    CodecUtil.defineField(Codec.unboundedMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.MEMORY_SET), "activity_memories_to_erase_when_stopped", MakeBrainModifier::activityMemoriesToEraseWhenStopped),
+                    Codec.simpleMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.PRIORITIES_TO_BEHAVIORS, BuiltInRegistries.ACTIVITY).fieldOf(  "prioritized_behaviors").forGetter(MakeBrainModifier::prioritizedBehaviors),
+                    Codec.simpleMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.ACTIVITY_REQUIREMENTS, BuiltInRegistries.ACTIVITY).fieldOf(  "activity_requirements").forGetter(MakeBrainModifier::activityRequirements),
+                    Codec.simpleMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.MEMORY_SET, BuiltInRegistries.ACTIVITY).fieldOf( "activity_memories_to_erase_when_stopped").forGetter(MakeBrainModifier::activityMemoriesToEraseWhenStopped),
                     CodecUtil.defineField(new SetCodec<>(ForgeRegistries.ACTIVITIES.getCodec()), "core_activities", MakeBrainModifier::coreActivities),
                     CodecUtil.defineField(ForgeRegistries.ACTIVITIES.getCodec(), "default_activity", MakeBrainModifier::defaultActivity)
             ).apply(builder, MakeBrainModifier::new)));
@@ -49,7 +50,7 @@ public class AptitudeBrainModifiers {
             RecordCodecBuilder.create(builder -> builder.group(
                     CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", AddActivityModifier::entityTypes),
                     CodecUtil.defineField(ForgeRegistries.ACTIVITIES.getCodec(), "activity", AddActivityModifier::activity),
-                    CodecUtil.defineFieldUnchecked(CustomCodecs.PRIORITIZED_BEHAVIORS, "prioritized_behaviors", AddActivityModifier::prioritizedBehaviors),
+                    CodecUtil.defineField(CustomCodecs.PRIORITIES_TO_BEHAVIORS, "prioritized_behaviors", AddActivityModifier::prioritizedBehaviors),
                     CodecUtil.defineField(CustomCodecs.ACTIVITY_REQUIREMENTS, "activity_requirements", AddActivityModifier::activityRequirements),
                     CodecUtil.defineField(CustomCodecs.MEMORY_SET, "activity_memories_to_erase_when_stopped", AddActivityModifier::activityMemoriesToEraseWhenStopped)
             ).apply(builder, AddActivityModifier::new)));
@@ -58,7 +59,7 @@ public class AptitudeBrainModifiers {
             RecordCodecBuilder.create(builder -> builder.group(
                     CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", AddBehaviorsModifier::entityTypes),
                     CodecUtil.defineField(ForgeRegistries.ACTIVITIES.getCodec(), "activity", AddBehaviorsModifier::activity),
-                    CodecUtil.defineFieldUnchecked(CustomCodecs.PRIORITIZED_BEHAVIORS, "prioritized_behaviors", AddBehaviorsModifier::prioritizedBehaviors)
+                    CodecUtil.defineField(CustomCodecs.PRIORITIES_TO_BEHAVIORS, "prioritized_behaviors", AddBehaviorsModifier::prioritizedBehaviors)
             ).apply(builder, AddBehaviorsModifier::new)));
 
     public static final RegistryObject<Codec<RemoveMemoryTypesModifier>> REMOVE_MEMORY_TYPES = register("remove_memory_types", () ->

@@ -13,10 +13,10 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import java.util.List;
 import java.util.Map;
 
-public record RunOneMaker(Map<MemoryModuleType<?>, MemoryStatus> entryCondition, List<Pair<? extends BehaviorMaker, Integer>> weightedBehaviors) implements BehaviorMaker {
+public record RunOneMaker(Map<MemoryModuleType<?>, MemoryStatus> entryCondition, List<Pair<BehaviorMaker, String>> weightedBehaviors) implements BehaviorMaker {
 
 
-    public static RunOneMaker simple(List<Pair<? extends BehaviorMaker, Integer>> weightedBehaviors) {
+    public static RunOneMaker simple(List<Pair<BehaviorMaker, String>> weightedBehaviors) {
         return new RunOneMaker(ImmutableMap.of(), weightedBehaviors);
     }
     @Override

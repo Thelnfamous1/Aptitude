@@ -6,7 +6,6 @@ import com.infamous.aptitude.behavior.custom.CustomSetEntityLookTargetMaker;
 import com.infamous.aptitude.behavior.custom.CustomStopAttackingIfTargetInvalidMaker;
 import com.infamous.aptitude.logic.biconsumer.BiConsumerMaker;
 import com.infamous.aptitude.logic.bipredicate.BiPredicateMaker;
-import com.infamous.aptitude.logic.predicate.PredicateMaker;
 import com.infamous.aptitude.util.CodecUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -22,7 +21,7 @@ public class AptitudeBehaviorMakers {
 
     public static final RegistryObject<Codec<CustomSetEntityLookTargetMaker>> SET_ENTITY_LOOK_TARGET = register("set_entity_look_target",
             () -> RecordCodecBuilder.create((b) -> b.group(
-                    CodecUtil.defineFieldUnchecked(PredicateMaker.DIRECT_CODEC, "can_look_at", CustomSetEntityLookTargetMaker::canLookAt),
+                    CodecUtil.defineFieldUnchecked(BiPredicateMaker.DIRECT_CODEC, "can_look_at", CustomSetEntityLookTargetMaker::canLookAt),
                     CodecUtil.defineField(Codec.FLOAT, "max_distance", CustomSetEntityLookTargetMaker::maxDistance)
             ).apply(b, CustomSetEntityLookTargetMaker::new)));
 

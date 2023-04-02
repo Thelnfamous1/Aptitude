@@ -41,6 +41,9 @@ public class Aptitude
         AptitudeBrainModifiers.BRAIN_MODIFIER_SERIALIZERS.register(modEventBus);
         AptitudeFunctionMakers.FUNCTION_MAKER_SERIALIZERS.register(modEventBus);
         AptitudeBehaviorMakers.BEHAVIOR_MAKER_SERIALIZERS.register(modEventBus);
+        AptitudePredicateMakers.PREDICATE_MAKER_SERIALIZERS.register(modEventBus);
         VanillaBehaviorMakers.BEHAVIOR_MAKER_SERIALIZERS.register(modEventBus);
+
+        AptitudeDeferredRegistriesSetup.setup(modEventBus);
     }
 }

@@ -10,9 +10,9 @@ import net.minecraft.world.entity.ai.behavior.TriggerGate;
 
 import java.util.List;
 
-public record TriggerGateMaker(List<Pair<? extends BehaviorMaker, Integer>> weightedTriggers, GateBehavior.OrderPolicy orderPolicy, GateBehavior.RunningPolicy runningPolicy) implements BehaviorMaker {
+public record TriggerGateMaker(List<Pair<BehaviorMaker, String>> weightedTriggers, GateBehavior.OrderPolicy orderPolicy, GateBehavior.RunningPolicy runningPolicy) implements BehaviorMaker {
 
-    public static TriggerGateMaker triggerOneShuffled(List<Pair<? extends BehaviorMaker, Integer>> weightedTriggers) {
+    public static TriggerGateMaker triggerOneShuffled(List<Pair<BehaviorMaker, String>> weightedTriggers) {
         return new TriggerGateMaker(weightedTriggers, GateBehavior.OrderPolicy.SHUFFLED, GateBehavior.RunningPolicy.RUN_ONE);
     }
 

@@ -130,7 +130,7 @@ public class VanillaBehaviorMakers {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static final RegistryObject<Codec<EraseMemoryIfMaker>> ERASE_MEMORY_IF = register("erase_memory_if",
             () -> RecordCodecBuilder.create((b) -> b.group(
-                    CodecUtil.defineFieldUnchecked(BiPredicateMaker.DIRECT_CODEC, "erase_if", EraseMemoryIfMaker::eraseIf),
+                    CodecUtil.defineFieldUnchecked(PredicateMaker.DIRECT_CODEC, "erase_if", EraseMemoryIfMaker::eraseIf),
                     CodecUtil.defineFieldUnchecked(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec(), "memory", EraseMemoryIfMaker::memory)
             ).apply(b, EraseMemoryIfMaker::new)));
 
@@ -147,14 +147,13 @@ public class VanillaBehaviorMakers {
                     CodecUtil.defineField(ForgeRegistries.SOUND_EVENTS.getCodec(), "eat_sound", FrogShootTongueMaker::eatSound)
             ).apply(b, FrogShootTongueMaker::new)));
 
-    @SuppressWarnings({"rawtypes"})
     public static final RegistryObject<Codec<GateBehaviorMaker>> GATE_BEHAVIOR = register("gate_behavior",
             () -> RecordCodecBuilder.create((b) -> b.group(
                     CodecUtil.defineFieldUnchecked(CustomCodecs.MEMORY_TO_STATUS_MAP, "entry_condition", GateBehaviorMaker::entryCondition),
                     CodecUtil.defineFieldUnchecked(CustomCodecs.MEMORY_SET, "exit_erased_memories", GateBehaviorMaker::exitErasedMemories),
                     CodecUtil.defineField(CustomCodecs.ORDER_POLICY, "order_policy", GateBehaviorMaker::orderPolicy),
                     CodecUtil.defineField(CustomCodecs.RUNNING_POLICY, "running_policy", GateBehaviorMaker::runningPolicy),
-                    CodecUtil.defineFieldUnchecked(CustomCodecs.WEIGHTED_BEHAVIORS, "weighted_behaviors", GateBehaviorMaker::weightedBehaviors)
+                    CodecUtil.defineFieldUnchecked(CustomCodecs.BEHAVIORS_TO_WEIGHT, "weighted_behaviors", GateBehaviorMaker::weightedBehaviors)
             ).apply(b, GateBehaviorMaker::new)));
 
     public static final RegistryObject<Codec<GoAndGiveItemsToTargetMaker>> GO_AND_GIVE_ITEMS_TO_TARGET = register("go_and_give_items_to_target",
@@ -214,7 +213,7 @@ public class VanillaBehaviorMakers {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static final RegistryObject<Codec<LevelEntityTriggerIfMaker>> LEVEL_ENTITY_TRIGGER_IF = register("level_entity_trigger_if",
             () -> RecordCodecBuilder.create((b) -> b.group(
-                    CodecUtil.defineFieldUnchecked(PredicateMaker.DIRECT_CODEC, "level_entity_bipredicate", LevelEntityTriggerIfMaker::levelEntityBiPredicate)
+                    CodecUtil.defineFieldUnchecked(BiPredicateMaker.DIRECT_CODEC, "level_entity_bipredicate", LevelEntityTriggerIfMaker::levelEntityBiPredicate)
             ).apply(b, LevelEntityTriggerIfMaker::new)));
 
     public static final RegistryObject<Codec<LocateHidingPlaceMaker>> LOCATE_HIDING_PLACE = register("locate_hiding_place",
@@ -440,8 +439,8 @@ public class VanillaBehaviorMakers {
 
     public static final RegistryObject<Codec<RunOneMaker>> RUN_ONE = register("run_one",
             () -> RecordCodecBuilder.create((b) -> b.group(
-                    CodecUtil.defineFieldUnchecked(CustomCodecs.MEMORY_TO_STATUS_MAP, "entry_condition", RunOneMaker::entryCondition),
-                    CodecUtil.defineFieldUnchecked(CustomCodecs.WEIGHTED_BEHAVIORS, "weighted_behaviors", RunOneMaker::weightedBehaviors)
+                    CodecUtil.defineField(CustomCodecs.MEMORY_TO_STATUS_MAP, "entry_condition", RunOneMaker::entryCondition),
+                    CodecUtil.defineField(CustomCodecs.BEHAVIORS_TO_WEIGHT, "weighted_behaviors", RunOneMaker::weightedBehaviors)
             ).apply(b, RunOneMaker::new)));
 
     public static final RegistryObject<Codec<SetEntityLookTargetMaker>> SET_ENTITY_LOOK_TARGET = register("set_entity_look_target",
@@ -508,7 +507,7 @@ public class VanillaBehaviorMakers {
     public static final RegistryObject<Codec<StartCelebratingIfTargetDeadMaker>> START_CELEBRATING_IF_TARGET_DEAD = register("start_celebrating_if_target_dead",
             () -> RecordCodecBuilder.create((b) -> b.group(
                     CodecUtil.defineField(Codec.INT, "duration", StartCelebratingIfTargetDeadMaker::duration),
-                    CodecUtil.defineFieldUnchecked(BiPredicateMaker.DIRECT_CODEC, "predicate", StartCelebratingIfTargetDeadMaker::predicate)
+                    CodecUtil.defineFieldUnchecked(BiPredicateMaker.DIRECT_CODEC, "can_celebrate", StartCelebratingIfTargetDeadMaker::canCelebrate)
             ).apply(b, StartCelebratingIfTargetDeadMaker::new)));
 
     public static final RegistryObject<Codec<StayCloseToTargetMaker>> STAY_CLOSE_TO_TARGET = register("stay_close_to_target",
@@ -535,9 +534,9 @@ public class VanillaBehaviorMakers {
 
     public static final RegistryObject<Codec<TriggerGateMaker>> TRIGGER_GATE = register("trigger_gate",
             () -> RecordCodecBuilder.create((b) -> b.group(
-                    CodecUtil.defineFieldUnchecked(CustomCodecs.WEIGHTED_BEHAVIORS, "weighted_triggers", TriggerGateMaker::weightedTriggers),
-                    CodecUtil.defineFieldUnchecked(CustomCodecs.ORDER_POLICY, "order_policy", TriggerGateMaker::orderPolicy),
-                    CodecUtil.defineFieldUnchecked(CustomCodecs.RUNNING_POLICY, "running_policy", TriggerGateMaker::runningPolicy)
+                    CodecUtil.defineField(CustomCodecs.BEHAVIORS_TO_WEIGHT, "weighted_triggers", TriggerGateMaker::weightedTriggers),
+                    CodecUtil.defineField(CustomCodecs.ORDER_POLICY, "order_policy", TriggerGateMaker::orderPolicy),
+                    CodecUtil.defineField(CustomCodecs.RUNNING_POLICY, "running_policy", TriggerGateMaker::runningPolicy)
             ).apply(b, TriggerGateMaker::new)));
 
     public static final RegistryObject<Codec<TryLaySpawnOnWaterNearLandMaker>> TRY_LAY_SPAWN_ON_WATER_NEAR_LAND = register("try_lay_spawn_on_water_near_land",

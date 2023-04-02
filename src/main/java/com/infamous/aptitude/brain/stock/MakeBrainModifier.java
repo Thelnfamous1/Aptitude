@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 public record MakeBrainModifier(boolean replace, HolderSet<EntityType<?>> entityTypes,
-                                Map<Activity, List<Pair<Integer, ? extends BehaviorMaker>>> prioritizedBehaviors,
+                                Map<Activity, List<Pair<String, BehaviorMaker>>> prioritizedBehaviors,
                                 Map<Activity, Set<Pair<MemoryModuleType<?>, MemoryStatus>>> activityRequirements,
                                 Map<Activity, Set<MemoryModuleType<?>>> activityMemoriesToEraseWhenStopped,
                                 Set<Activity> coreActivities,

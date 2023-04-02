@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public record AddBehaviorsModifier(HolderSet<EntityType<?>> entityTypes, Activity activity, List<Pair<Integer, ? extends BehaviorMaker>> prioritizedBehaviors) implements BrainModifier {
+public record AddBehaviorsModifier(HolderSet<EntityType<?>> entityTypes, Activity activity, List<Pair<String, BehaviorMaker>> prioritizedBehaviors) implements BrainModifier {
     @Override
     public void modify(Holder<EntityType<?>> entityType, Brain<?> brain, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder) {
         if(phase == Phase.ADD && this.entityTypes.contains(entityType)){
-            Map<Integer, Map<Activity, Set<BehaviorControl<?>>>> availableBehaviorsByPriority = ((BrainAccessor) brain).getAvailableBehaviorsByPriority();
+            Map<Integer, Map<Activity, Set<BehaviorControl<?>>>> availableBehaviorsByPriority = ((BrainAccessor<?>) brain).getAvailableBehaviorsByPriority();
             for(Pair<Integer, ? extends BehaviorControl<?>> pair : BehaviorMaker.makePrioritizedBehaviors(this.prioritizedBehaviors)) {
                 availableBehaviorsByPriority
                         .computeIfAbsent(pair.getFirst(), (priority) -> Maps.newHashMap())

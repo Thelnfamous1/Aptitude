@@ -8,6 +8,7 @@ import com.infamous.aptitude.mixin.TickerAccessor;
 import com.infamous.aptitude.util.CodecUtil;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.CompoundListCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.UnboundedMapCodec;
 import net.minecraft.core.HolderSet;
@@ -39,8 +40,8 @@ public class CustomCodecs {
             CodecUtil.defineField(Codec.BOOL, "test_invisible", tc -> ((TargetingConditionsAccessor)tc).getTestInvisible()),
             CodecUtil.defineOptionalFieldUnchecked(PredicateMaker.DIRECT_CODEC, "selector", tc -> Optional.empty()) // TargetingConditions don't store a PredicateMaker
             ).apply(instance, (isCombat, range, checkLineOfSight, testInvisible, selector) -> makeTargetingConditions(isCombat, range, checkLineOfSight, testInvisible, selector.map(PredicateMaker.class::cast).orElse(null))));
-    public static final Codec<List<Pair<BehaviorMaker, Integer>>> WEIGHTED_BEHAVIORS = Codec.compoundList(BehaviorMaker.DIRECT_CODEC, Codec.INT);
-    public static final Codec<List<Pair<Integer, BehaviorMaker>>> PRIORITIZED_BEHAVIORS = Codec.compoundList(Codec.INT, BehaviorMaker.DIRECT_CODEC);
+    public static final Codec<List<Pair<BehaviorMaker, String>>> BEHAVIORS_TO_WEIGHT = new CompoundListCodec<>(BehaviorMaker.DIRECT_CODEC, Codec.STRING);
+    public static final Codec<List<Pair<String, BehaviorMaker>>> PRIORITIES_TO_BEHAVIORS = new CompoundListCodec<>(Codec.STRING, BehaviorMaker.DIRECT_CODEC);
     public static final Codec<Set<MemoryModuleType<?>>> MEMORY_SET = new SetCodec<>(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec());
     public static final Codec<MemoryStatus> MEMORY_STATUS = new EnumCodec<>(MemoryStatus.class);
     public static final UnboundedMapCodec<MemoryModuleType<?>, MemoryStatus> MEMORY_TO_STATUS_MAP = Codec.unboundedMap(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec(), MEMORY_STATUS);

@@ -31,27 +31,21 @@ public interface BehaviorMaker
 
     Codec<? extends BehaviorMaker> getCodec();
 
-    static <E extends LivingEntity> List<Pair<? extends BehaviorControl<? super E>, Integer>> makeWeightedBehaviors(List<Pair<? extends BehaviorMaker, Integer>> weightedBehaviorMakers){
+    static <E extends LivingEntity> List<Pair<? extends BehaviorControl<? super E>, Integer>> makeWeightedBehaviors(List<Pair<BehaviorMaker, String>> weightedBehaviorMakers){
         List<Pair<? extends BehaviorControl<?>, Integer>> weightedBehaviors = new ArrayList<>(weightedBehaviorMakers.size());
-        weightedBehaviorMakers.forEach(pair -> {
-            weightedBehaviors.add(Pair.of(pair.getFirst().make(), pair.getSecond()));
-        });
+        weightedBehaviorMakers.forEach(pair -> weightedBehaviors.add(Pair.of(pair.getFirst().make(), Integer.parseInt(pair.getSecond()))));
         return (List<Pair<? extends BehaviorControl<? super E>, Integer>>) (List<?>) weightedBehaviors;
     }
 
-    static <E extends LivingEntity> ImmutableList<Pair<Integer, ? extends BehaviorControl<? super E>>> makePrioritizedBehaviors(List<Pair<Integer, ? extends BehaviorMaker>> prioritizedBehaviorMakers){
+    static <E extends LivingEntity> ImmutableList<Pair<Integer, ? extends BehaviorControl<? super E>>> makePrioritizedBehaviors(List<Pair<String, BehaviorMaker>> prioritizedBehaviorMakers){
         ImmutableList.Builder<Pair<Integer, ? extends BehaviorControl<?>>> builder = ImmutableList.builder();
-        prioritizedBehaviorMakers.forEach(pair -> {
-            builder.add(Pair.of(pair.getFirst(), pair.getSecond().make()));
-        });
+        prioritizedBehaviorMakers.forEach(pair -> builder.add(Pair.of(Integer.parseInt(pair.getFirst()), pair.getSecond().make())));
         return (ImmutableList<Pair<Integer, ? extends BehaviorControl<? super E>>>) (ImmutableList<?>) builder.build();
     }
 
-    static <E extends LivingEntity> List<Pair<? extends Trigger<? super E>, Integer>> makeWeightedTriggers(List<Pair<? extends BehaviorMaker, Integer>> weightedBehaviorMakers){
+    static <E extends LivingEntity> List<Pair<? extends Trigger<? super E>, Integer>> makeWeightedTriggers(List<Pair<BehaviorMaker, String>> weightedBehaviorMakers){
         List<Pair<? extends Trigger<?>, Integer>> weightedBehaviors = new ArrayList<>(weightedBehaviorMakers.size());
-        weightedBehaviorMakers.forEach(pair -> {
-            weightedBehaviors.add(Pair.of(makeTrigger(pair.getFirst()), pair.getSecond()));
-        });
+        weightedBehaviorMakers.forEach(pair -> weightedBehaviors.add(Pair.of(makeTrigger(pair.getFirst()), Integer.parseInt(pair.getSecond()))));
         return (List<Pair<? extends Trigger<? super E>, Integer>>) (List<?>) weightedBehaviors;
     }
 

@@ -8,10 +8,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.behavior.StartCelebratingIfTargetDead;
 
-public record StartCelebratingIfTargetDeadMaker(int duration, BiPredicateMaker<LivingEntity, LivingEntity> predicate) implements BehaviorMaker {
+public record StartCelebratingIfTargetDeadMaker(int duration, BiPredicateMaker<LivingEntity, LivingEntity> canCelebrate) implements BehaviorMaker {
     @Override
     public BehaviorControl<?> make() {
-        return StartCelebratingIfTargetDead.create(this.duration, this.predicate().make());
+        return StartCelebratingIfTargetDead.create(this.duration, this.canCelebrate().make());
     }
 
     @Override

@@ -17,7 +17,7 @@ import net.minecraft.world.entity.schedule.Activity;
 import java.util.List;
 import java.util.Set;
 
-public record AddActivityModifier(HolderSet<EntityType<?>> entityTypes, Activity activity, List<Pair<Integer, ? extends BehaviorMaker>> prioritizedBehaviors, Set<Pair<MemoryModuleType<?>, MemoryStatus>> activityRequirements, Set<MemoryModuleType<?>> activityMemoriesToEraseWhenStopped) implements BrainModifier {
+public record AddActivityModifier(HolderSet<EntityType<?>> entityTypes, Activity activity, List<Pair<String, BehaviorMaker>> prioritizedBehaviors, Set<Pair<MemoryModuleType<?>, MemoryStatus>> activityRequirements, Set<MemoryModuleType<?>> activityMemoriesToEraseWhenStopped) implements BrainModifier {
     @Override
     public void modify(Holder<EntityType<?>> entityType, Brain<?> brain, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder) {
         if(phase == Phase.ADD && this.entityTypes.contains(entityType)){
