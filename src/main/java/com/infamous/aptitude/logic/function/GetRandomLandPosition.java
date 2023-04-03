@@ -1,5 +1,6 @@
 package com.infamous.aptitude.logic.function;
 
+import com.infamous.aptitude.registry.AptitudeFunctionMakers;
 import com.mojang.serialization.Codec;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
@@ -15,6 +16,6 @@ public record GetRandomLandPosition(int maxXZDistance, int maxYDistance) impleme
 
     @Override
     public Codec<? extends FunctionMaker<PathfinderMob, Vec3>> getCodec() {
-        return null;
+        return AptitudeFunctionMakers.GET_RANDOM_LAND_POSITION.get();
     }
 }

@@ -13,15 +13,16 @@ import com.infamous.aptitude.behavior.vanilla.pathfinder.PathfinderRandomStrollM
 import com.infamous.aptitude.behavior.vanilla.pathfinder.PathfinderSetWalkTargetAwayFromMaker;
 import com.infamous.aptitude.behavior.vanilla.piglin.PiglinStartHuntingHoglinMaker;
 import com.infamous.aptitude.behavior.vanilla.piglin.PiglinStopHoldingItemIfNoLongerAdmiringMaker;
+import com.infamous.aptitude.codec.PrioritizedBehavior;
+import com.infamous.aptitude.codec.WeightedBehavior;
 import com.infamous.aptitude.logic.bipredicate.*;
 import com.infamous.aptitude.logic.bipredicate.util.NegateBiPredicateMaker;
-import com.infamous.aptitude.logic.function.PiglinlikeTargetFinder;
+import com.infamous.aptitude.logic.function.PiglinlikeFindNearestValidAttackTarget;
 import com.infamous.aptitude.logic.predicate.*;
 import com.infamous.aptitude.logic.predicate.utility.AllOfPredicateMaker;
 import com.infamous.aptitude.logic.predicate.utility.AlwaysTrue;
 import com.infamous.aptitude.logic.predicate.utility.AnyOfPredicateMaker;
 import com.infamous.aptitude.logic.predicate.utility.Negate;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -63,7 +64,7 @@ public class PiglinAiDefinition {
     private static final float SPEED_MULTIPLIER_WHEN_DANCING = 0.6F;
     private static final float SPEED_MULTIPLIER_WHEN_IDLING = 0.6F;
 
-    static ImmutableList<Pair<String, BehaviorMaker>> initCoreActivity() {
+    static ImmutableList<PrioritizedBehavior> initCoreActivity() {
         return DataGenUtil.createPriorityPairs(0, ImmutableList.of(
                 MobLookAtTargetSinkMaker.simple(),
                 MobMoveToTargetSinkMaker.simple(),
@@ -89,16 +90,16 @@ public class PiglinAiDefinition {
     }
 
 
-    static ImmutableList<Pair<String, BehaviorMaker>> initIdleActivity() {
+    static ImmutableList<PrioritizedBehavior> initIdleActivity() {
         return DataGenUtil.createPriorityPairs(10, ImmutableList.of(
                 new SetEntityLookTargetMaker(isPlayerHoldingLovedItem(), MAX_LOOK_DIST_FOR_PLAYER_HOLDING_LOVED_ITEM),
-                new MobStartAttackingMaker(isAdult(), PiglinlikeTargetFinder.piglin()),
+                new MobStartAttackingMaker(isAdult(), PiglinlikeFindNearestValidAttackTarget.piglin()),
                 new SequenceTriggerIfMaker<>(new PiglinCanHunt(), new PiglinStartHuntingHoglinMaker()),
                 avoidRepellent(),
                 babySometimesRideBabyHoglin(),
-                createIdleLookBehaviors(),
                 createIdleMovementBehaviors(),
-                new SetLookAndInteractMaker(EntityType.PLAYER, 4)));
+                new SetLookAndInteractMaker(EntityType.PLAYER, 4)
+                ));
     }
 
     private static PredicateMaker<LivingEntity> isPlayerHoldingLovedItem() {
@@ -119,26 +120,26 @@ public class PiglinAiDefinition {
     }
 
     private static BehaviorMaker createIdleLookBehaviors() {
-        return RunOneMaker.simple(ImmutableList.<Pair<BehaviorMaker, String>>builder()
+        return RunOneMaker.simple(ImmutableList.<WeightedBehavior>builder()
                 .addAll(createLookBehaviors())
-                .add(Pair.of(new DoNothingMaker(30, 60), convertWeight(1)))
+                .add(WeightedBehavior.of(new DoNothingMaker(30, 60), convertWeight(1)))
                 .build());
     }
 
-    private static ImmutableList<Pair<BehaviorMaker, String>> createLookBehaviors() {
+    private static ImmutableList<WeightedBehavior> createLookBehaviors() {
         return ImmutableList.of(
-                Pair.of(SetEntityLookTargetMaker.forEntityType(EntityType.PLAYER, MAX_LOOK_DIST), convertWeight(1)),
-                Pair.of(SetEntityLookTargetMaker.forEntityType(EntityType.PIGLIN, MAX_LOOK_DIST), convertWeight(1)),
-                Pair.of(SetEntityLookTargetMaker.simple(MAX_LOOK_DIST), convertWeight(1)));
+                WeightedBehavior.of(SetEntityLookTargetMaker.forEntityType(EntityType.PLAYER, MAX_LOOK_DIST), convertWeight(1)),
+                WeightedBehavior.of(SetEntityLookTargetMaker.forEntityType(EntityType.PIGLIN, MAX_LOOK_DIST), convertWeight(1)),
+                WeightedBehavior.of(SetEntityLookTargetMaker.simple(MAX_LOOK_DIST), convertWeight(1)));
     }
 
     private static BehaviorMaker createIdleMovementBehaviors() {
         return RunOneMaker.simple(
                 ImmutableList.of(
-                        Pair.of(PathfinderRandomStrollMaker.stroll(SPEED_MULTIPLIER_WHEN_IDLING), convertWeight(2)),
-                        Pair.of(InteractWithMaker.simple(EntityType.PIGLIN, INTERACTION_RANGE, MemoryModuleType.INTERACTION_TARGET, SPEED_MULTIPLIER_WHEN_IDLING, 2), convertWeight(2)),
-                        Pair.of(new SequenceTriggerIfMaker<>(doesntSeeAnyPlayerHoldingLovedItem(), SetWalkTargetFromLookTargetMaker.simple(SPEED_MULTIPLIER_WHEN_IDLING, 3)), convertWeight(2)),
-                        Pair.of(new DoNothingMaker(30, 60), convertWeight(1))));
+                        WeightedBehavior.of(PathfinderRandomStrollMaker.stroll(SPEED_MULTIPLIER_WHEN_IDLING), convertWeight(2)),
+                        WeightedBehavior.of(InteractWithMaker.simple(EntityType.PIGLIN, INTERACTION_RANGE, MemoryModuleType.INTERACTION_TARGET, SPEED_MULTIPLIER_WHEN_IDLING, 2), convertWeight(2)),
+                        WeightedBehavior.of(new SequenceTriggerIfMaker<>(doesntSeeAnyPlayerHoldingLovedItem(), SetWalkTargetFromLookTargetMaker.simple(SPEED_MULTIPLIER_WHEN_IDLING, 3)), convertWeight(2)),
+                        WeightedBehavior.of(new DoNothingMaker(30, 60), convertWeight(1))));
     }
 
     private static PredicateMaker<LivingEntity> doesntSeeAnyPlayerHoldingLovedItem() {
@@ -149,7 +150,7 @@ public class PiglinAiDefinition {
         return new EntityCheckMemory(MemoryModuleType.NEAREST_PLAYER_HOLDING_WANTED_ITEM, MemoryStatus.VALUE_PRESENT);
     }
 
-    static ImmutableList<Pair<String, BehaviorMaker>> initFightActivity() {
+    static ImmutableList<PrioritizedBehavior> initFightActivity() {
         return DataGenUtil.createPriorityPairs(10, ImmutableList.of(
                 CustomStopAttackingIfTargetInvalidMaker.predicateOnly(new NegateBiPredicateMaker<>(isNearestValidAttackTarget())),
                 new SequenceTriggerIfMaker<>(new EntityIsHolding(new ItemIsCrossbow()), new BackUpIfTooCloseMaker(MIN_DESIRED_DIST_FROM_TARGET_WHEN_HOLDING_CROSSBOW, SPEED_WHEN_STRAFING_BACK_FROM_TARGET)),
@@ -161,21 +162,22 @@ public class PiglinAiDefinition {
     }
 
     private static BiPredicateMaker<Mob, LivingEntity> isNearestValidAttackTarget() {
-        return new OptionalResultOfFirstIsSecond(PiglinlikeTargetFinder.piglin());
+        return new OptionalResultOfFirstIsSecond(PiglinlikeFindNearestValidAttackTarget.piglin());
     }
 
-    static ImmutableList<Pair<String, BehaviorMaker>> initCelebrateActivity() {
+    static ImmutableList<PrioritizedBehavior> initCelebrateActivity() {
         return DataGenUtil.createPriorityPairs(10, ImmutableList.of(
                 avoidRepellent(),
                 new SetEntityLookTargetMaker(isPlayerHoldingLovedItem(), MAX_LOOK_DIST_FOR_PLAYER_HOLDING_LOVED_ITEM),
-                new MobStartAttackingMaker(isAdult(), PiglinlikeTargetFinder.piglin()),
+                new MobStartAttackingMaker(isAdult(), PiglinlikeFindNearestValidAttackTarget.piglin()),
                 new SequenceTriggerIfMaker<>(new Negate<>(new PiglinIsDancing()), new GoToTargetLocationMaker(MemoryModuleType.CELEBRATE_LOCATION, 2, SPEED_MULTIPLIER_WHEN_GOING_TO_CELEBRATE_LOCATION)),
                 new SequenceTriggerIfMaker<>(new PiglinIsDancing(), new GoToTargetLocationMaker(MemoryModuleType.CELEBRATE_LOCATION, 4, SPEED_MULTIPLIER_WHEN_GOING_TO_CELEBRATE_LOCATION)),
                 RunOneMaker.simple(
                         ImmutableList.of(
-                                Pair.of(SetEntityLookTargetMaker.forEntityType(EntityType.PIGLIN, MAX_LOOK_DIST), convertWeight(1)),
-                                Pair.of(PathfinderRandomStrollMaker.stroll(SPEED_MULTIPLIER_WHEN_DANCING, 2, 1), convertWeight(1)),
-                                Pair.of(new DoNothingMaker(10, 20), convertWeight(1))))));
+                                WeightedBehavior.of(SetEntityLookTargetMaker.forEntityType(EntityType.PIGLIN, MAX_LOOK_DIST), convertWeight(1)),
+                                WeightedBehavior.of(PathfinderRandomStrollMaker.stroll(SPEED_MULTIPLIER_WHEN_DANCING, 2, 1), convertWeight(1)),
+                                WeightedBehavior.of(new DoNothingMaker(10, 20), convertWeight(1))))
+                 ));
     }
 
 
@@ -183,35 +185,35 @@ public class PiglinAiDefinition {
         return new AnyOfPredicateMaker<>(List.of(new EntityCheckItemInSlot(EquipmentSlot.OFFHAND, new ItemIsEmpty()), new EntityCheckItemInSlot(EquipmentSlot.OFFHAND, new Negate<>(new ItemIsTag(ItemTags.PIGLIN_LOVED)))));
     }
 
-    static ImmutableList<Pair<String, BehaviorMaker>> initAdmireItemActivity() {
+    static ImmutableList<PrioritizedBehavior> initAdmireItemActivity() {
         return DataGenUtil.createPriorityPairs(10, ImmutableList.of(
                 new GoToWantedItemMaker<>(isNotHoldingLovedItemInOffHand(), SPEED_MULTIPLIER_WHEN_GOING_TO_WANTED_ITEM, true, MAX_DISTANCE_TO_WALK_TO_ITEM),
                 new StopAdmiringIfItemTooFarAwayMaker(MAX_DISTANCE_TO_WALK_TO_ITEM),
                 new StopAdmiringIfTiredOfTryingToReachItemMaker(MAX_TIME_TO_WALK_TO_ITEM, HOW_LONG_TIME_TO_DISABLE_ADMIRE_WALKING_IF_CANT_REACH_ITEM)));
     }
 
-    static ImmutableList<Pair<String, BehaviorMaker>> initRetreatActivity() {
+    static ImmutableList<PrioritizedBehavior> initRetreatActivity() {
         return DataGenUtil.createPriorityPairs(10, ImmutableList.of(
                 PathfinderSetWalkTargetAwayFromMaker.entity(MemoryModuleType.AVOID_TARGET, SPEED_MULTIPLIER_WHEN_AVOIDING, DESIRED_DISTANCE_FROM_ENTITY_WHEN_AVOIDING, true),
                 createIdleLookBehaviors(),
                 createIdleMovementBehaviors(),
-                new EraseMemoryIfMaker<>(PiglinlikeStopFleeing.piglin(), MemoryModuleType.AVOID_TARGET)));
+                new EraseMemoryIfMaker<>(PiglinlikeWantsToStopFleeing.piglin(), MemoryModuleType.AVOID_TARGET)));
     }
 
-    static ImmutableList<Pair<String, BehaviorMaker>> initRideHoglinActivity() {
+    static ImmutableList<PrioritizedBehavior> initRideHoglinActivity() {
         return DataGenUtil.createPriorityPairs(10, ImmutableList.of(
                 new MountMaker(SPEED_MULTIPLIER_WHEN_MOUNTING),
                 new SetEntityLookTargetMaker(isPlayerHoldingLovedItem(), MAX_LOOK_DIST),
                 new SequenceMaker(new EntityTriggerIfMaker(new EntityIsPassenger()),
                         TriggerGateMaker.triggerOneShuffled(
-                                ImmutableList.<Pair<BehaviorMaker, String>>builder()
+                                ImmutableList.<WeightedBehavior>builder()
                                         .addAll(createLookBehaviors())
-                                        .add(Pair.of(new EntityTriggerIfMaker<>(new AlwaysTrue<>()), convertWeight(1)))
+                                        .add(WeightedBehavior.of(new EntityTriggerIfMaker<>(new AlwaysTrue<>()), convertWeight(1)))
                                         .build())),
                 new DismountOrSkipMountingMaker(MAX_WALK_DISTANCE_TO_START_RIDING, PiglinlikeStopRiding.piglin())));
     }
 
-    private static String convertWeight(int i) {
-        return Integer.toString(i);
+    private static int convertWeight(int i) {
+        return i;
     }
 }

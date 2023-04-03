@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-public record PiglinlikeStopFleeing(MemoryModuleType<? extends LivingEntity> targetMemory, PredicateMaker<LivingEntity> targetPredicate, BiPredicateMaker<LivingEntity, LivingEntity> backupBiPredicate) implements PredicateMaker<LivingEntity> {
+public record PiglinlikeWantsToStopFleeing(MemoryModuleType<? extends LivingEntity> targetMemory, PredicateMaker<LivingEntity> targetPredicate, BiPredicateMaker<LivingEntity, LivingEntity> fallbackEntityTargetBiPredicate) implements PredicateMaker<LivingEntity> {
 
-    public static PiglinlikeStopFleeing piglin() {
-        return new PiglinlikeStopFleeing(
+    public static PiglinlikeWantsToStopFleeing piglin() {
+        return new PiglinlikeWantsToStopFleeing(
                 MemoryModuleType.AVOID_TARGET,
                 isTargetHoglinAndOutnumberedByHoglins(),
                 isTargetZombifiedAndNearestVisibleZombified());
@@ -46,7 +46,7 @@ public record PiglinlikeStopFleeing(MemoryModuleType<? extends LivingEntity> tar
         );
     }
 
-    private static boolean wantsToStopFleeing(LivingEntity entity, MemoryModuleType<? extends LivingEntity> targetMemory, Predicate<LivingEntity> targetPredicate, BiPredicate<LivingEntity, LivingEntity> backupBiPredicate) {
+    private static boolean wantsToStopFleeing(LivingEntity entity, MemoryModuleType<? extends LivingEntity> targetMemory, Predicate<LivingEntity> targetPredicate, BiPredicate<LivingEntity, LivingEntity> fallbackEntityTargetBipredicate) {
         Brain<?> brain = entity.getBrain();
         if (!brain.hasMemoryValue(targetMemory)) {
             return true;
@@ -55,17 +55,17 @@ public record PiglinlikeStopFleeing(MemoryModuleType<? extends LivingEntity> tar
             LivingEntity target = brain.getMemory(targetMemory).get();
             if (targetPredicate.test(target)) {
                 return true;
-            } else return backupBiPredicate.test(entity, target);
+            } else return fallbackEntityTargetBipredicate.test(entity, target);
         }
     }
 
     @Override
     public Predicate<LivingEntity> make() {
-        return le -> wantsToStopFleeing(le, this.targetMemory, this.targetPredicate.make(), this.backupBiPredicate.make());
+        return le -> wantsToStopFleeing(le, this.targetMemory, this.targetPredicate.make(), this.fallbackEntityTargetBiPredicate.make());
     }
 
     @Override
     public Codec<? extends PredicateMaker<LivingEntity>> getCodec() {
-        return AptitudePredicateMakers.PIGLINLIKE_STOP_FLEEING.get();
+        return AptitudePredicateMakers.PIGLINLIKE_WANTS_TO_STOP_FLEEING.get();
     }
 }

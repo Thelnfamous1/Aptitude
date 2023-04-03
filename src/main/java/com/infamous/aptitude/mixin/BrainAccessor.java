@@ -45,4 +45,11 @@ public interface BrainAccessor<E extends LivingEntity> {
     @Accessor
     Map<Activity, Set<MemoryModuleType<?>>> getActivityMemoriesToEraseWhenStopped();
 
+    @Accessor
+    Set<Activity> getCoreActivities();
+
+    @Mutable
+    @Accessor
+    void setCoreActivities(Set<Activity> coreActivities);
+
 }

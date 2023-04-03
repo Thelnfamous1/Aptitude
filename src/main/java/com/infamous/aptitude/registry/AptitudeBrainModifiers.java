@@ -3,6 +3,7 @@ package com.infamous.aptitude.registry;
 import com.infamous.aptitude.Aptitude;
 import com.infamous.aptitude.brain.BrainModifier;
 import com.infamous.aptitude.brain.stock.*;
+import com.infamous.aptitude.codec.ActivityDefinition;
 import com.infamous.aptitude.codec.CustomCodecs;
 import com.infamous.aptitude.codec.SetCodec;
 import com.infamous.aptitude.util.CodecUtil;
@@ -20,32 +21,6 @@ public class AptitudeBrainModifiers {
     public static final DeferredRegister<Codec<? extends BrainModifier>> BRAIN_MODIFIER_SERIALIZERS =
             DeferredRegister.create(AptitudeRegistries.Keys.BRAIN_MODIFIER_SERIALIZERS_KEY, Aptitude.MODID);
 
-    public static final RegistryObject<Codec<NoneBrainModifier>> NONE = BRAIN_MODIFIER_SERIALIZERS.register("none",
-            () -> Codec.unit(NoneBrainModifier.INSTANCE));
-
-    public static final RegistryObject<Codec<MakeBrainModifier>> MAKE_BRAIN = register("make_brain", () ->
-            RecordCodecBuilder.create(builder -> builder.group(
-                    CodecUtil.defineField(Codec.BOOL, "replace", MakeBrainModifier::replace),
-                    CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", MakeBrainModifier::entityTypes),
-                    Codec.simpleMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.PRIORITIES_TO_BEHAVIORS, BuiltInRegistries.ACTIVITY).fieldOf(  "prioritized_behaviors").forGetter(MakeBrainModifier::prioritizedBehaviors),
-                    Codec.simpleMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.ACTIVITY_REQUIREMENTS, BuiltInRegistries.ACTIVITY).fieldOf(  "activity_requirements").forGetter(MakeBrainModifier::activityRequirements),
-                    Codec.simpleMap(ForgeRegistries.ACTIVITIES.getCodec(), CustomCodecs.MEMORY_SET, BuiltInRegistries.ACTIVITY).fieldOf( "activity_memories_to_erase_when_stopped").forGetter(MakeBrainModifier::activityMemoriesToEraseWhenStopped),
-                    CodecUtil.defineField(new SetCodec<>(ForgeRegistries.ACTIVITIES.getCodec()), "core_activities", MakeBrainModifier::coreActivities),
-                    CodecUtil.defineField(ForgeRegistries.ACTIVITIES.getCodec(), "default_activity", MakeBrainModifier::defaultActivity)
-            ).apply(builder, MakeBrainModifier::new)));
-
-    public static final RegistryObject<Codec<AddMemoryTypesModifier>> ADD_MEMORY_TYPES = register("add_memory_types", () ->
-            RecordCodecBuilder.create(builder -> builder.group(
-                    CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", AddMemoryTypesModifier::entityTypes),
-                    CodecUtil.defineField(CustomCodecs.MEMORY_TYPE_LIST, "memory_types", AddMemoryTypesModifier::memoryTypes)
-            ).apply(builder, AddMemoryTypesModifier::new)));
-
-    public static final RegistryObject<Codec<AddSensorTypesModifier>> ADD_SENSOR_TYPES = register("add_sensor_types", () ->
-            RecordCodecBuilder.create(builder -> builder.group(
-                    CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", AddSensorTypesModifier::entityTypes),
-                    CodecUtil.defineField(CustomCodecs.SENSOR_TYPE_LIST, "sensor_types", AddSensorTypesModifier::sensorTypes)
-            ).apply(builder, AddSensorTypesModifier::new)));
-
     public static final RegistryObject<Codec<AddActivityModifier>> ADD_ACTIVITY = register("add_activity", () ->
             RecordCodecBuilder.create(builder -> builder.group(
                     CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", AddActivityModifier::entityTypes),
@@ -62,17 +37,32 @@ public class AptitudeBrainModifiers {
                     CodecUtil.defineField(CustomCodecs.PRIORITIES_TO_BEHAVIORS, "prioritized_behaviors", AddBehaviorsModifier::prioritizedBehaviors)
             ).apply(builder, AddBehaviorsModifier::new)));
 
-    public static final RegistryObject<Codec<RemoveMemoryTypesModifier>> REMOVE_MEMORY_TYPES = register("remove_memory_types", () ->
+    public static final RegistryObject<Codec<AddMemoryTypesModifier>> ADD_MEMORY_TYPES = register("add_memory_types", () ->
             RecordCodecBuilder.create(builder -> builder.group(
-                    CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", RemoveMemoryTypesModifier::entityTypes),
-                    CodecUtil.defineField(CustomCodecs.MEMORY_TYPE_LIST, "memory_types", RemoveMemoryTypesModifier::memoryTypes)
-            ).apply(builder, RemoveMemoryTypesModifier::new)));
+                    CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", AddMemoryTypesModifier::entityTypes),
+                    CodecUtil.defineField(CustomCodecs.MEMORY_TYPE_HOLDER_SET, "memory_types", AddMemoryTypesModifier::memoryTypes)
+            ).apply(builder, AddMemoryTypesModifier::new)));
 
-    public static final RegistryObject<Codec<RemoveSensorTypesModifier>> REMOVE_SENSOR_TYPES = register("remove_sensor_types", () ->
+    public static final RegistryObject<Codec<AddSensorTypesModifier>> ADD_SENSOR_TYPES = register("add_sensor_types", () ->
             RecordCodecBuilder.create(builder -> builder.group(
-                    CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", RemoveSensorTypesModifier::entityTypes),
-                    CodecUtil.defineField(CustomCodecs.SENSOR_TYPE_LIST, "sensor_types", RemoveSensorTypesModifier::sensorTypes)
-            ).apply(builder, RemoveSensorTypesModifier::new)));
+                    CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", AddSensorTypesModifier::entityTypes),
+                    CodecUtil.defineField(CustomCodecs.SENSOR_TYPE_HOLDER_SET, "sensor_types", AddSensorTypesModifier::sensorTypes)
+            ).apply(builder, AddSensorTypesModifier::new)));
+
+    public static final RegistryObject<Codec<MakeBrainModifier>> MAKE_BRAIN = register("make_brain", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    CodecUtil.defineField(Codec.BOOL, "replace", MakeBrainModifier::replace),
+                    CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", MakeBrainModifier::entityTypes),
+                    CodecUtil.defineField(CustomCodecs.MEMORY_TYPE_LIST, "memory_types", MakeBrainModifier::memoryTypes),
+                    CodecUtil.defineField(CustomCodecs.SENSOR_TYPE_LIST, "sensor_types", MakeBrainModifier::sensorTypes),
+                    Codec.simpleMap(ForgeRegistries.ACTIVITIES.getCodec(), ActivityDefinition.CODEC, BuiltInRegistries.ACTIVITY).fieldOf("activity_definitions").forGetter(MakeBrainModifier::activityDefinitions),
+                    CodecUtil.defineField(new SetCodec<>(ForgeRegistries.ACTIVITIES.getCodec()), "core_activities", MakeBrainModifier::coreActivities),
+                    CodecUtil.defineField(ForgeRegistries.ACTIVITIES.getCodec(), "default_activity", MakeBrainModifier::defaultActivity),
+                    CodecUtil.defineField(ForgeRegistries.SCHEDULES.getCodec(), "schedule", MakeBrainModifier::schedule)
+            ).apply(builder, MakeBrainModifier::new)));
+
+    public static final RegistryObject<Codec<NoneBrainModifier>> NONE = BRAIN_MODIFIER_SERIALIZERS.register("none",
+            () -> Codec.unit(NoneBrainModifier.INSTANCE));
 
     public static final RegistryObject<Codec<RemoveActivityModifier>> REMOVE_ACTIVITY = register("remove_activity", () ->
             RecordCodecBuilder.create(builder -> builder.group(
@@ -86,6 +76,18 @@ public class AptitudeBrainModifiers {
                     CodecUtil.defineField(ForgeRegistries.ACTIVITIES.getCodec(), "activity", RemoveBehaviorsModifier::activity),
                     CodecUtil.defineField(CustomCodecs.INTEGER_LIST, "priorities", RemoveBehaviorsModifier::priorities)
             ).apply(builder, RemoveBehaviorsModifier::new)));
+
+    public static final RegistryObject<Codec<RemoveMemoryTypesModifier>> REMOVE_MEMORY_TYPES = register("remove_memory_types", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", RemoveMemoryTypesModifier::entityTypes),
+                    CodecUtil.defineField(CustomCodecs.MEMORY_TYPE_HOLDER_SET, "memory_types", RemoveMemoryTypesModifier::memoryTypes)
+            ).apply(builder, RemoveMemoryTypesModifier::new)));
+
+    public static final RegistryObject<Codec<RemoveSensorTypesModifier>> REMOVE_SENSOR_TYPES = register("remove_sensor_types", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    CodecUtil.defineField(CustomCodecs.ENTITY_TYPE_LIST, "entity_types", RemoveSensorTypesModifier::entityTypes),
+                    CodecUtil.defineField(CustomCodecs.SENSOR_TYPE_HOLDER_SET, "sensor_types", RemoveSensorTypesModifier::sensorTypes)
+            ).apply(builder, RemoveSensorTypesModifier::new)));
 
     private static <BM extends BrainModifier> RegistryObject<Codec<BM>> register(String id, Supplier<Codec<BM>> codecSupplier) {
         return BRAIN_MODIFIER_SERIALIZERS.register(id, codecSupplier);

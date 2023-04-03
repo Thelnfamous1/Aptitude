@@ -149,7 +149,7 @@ public class VanillaBehaviorMakers {
 
     public static final RegistryObject<Codec<GateBehaviorMaker>> GATE_BEHAVIOR = register("gate_behavior",
             () -> RecordCodecBuilder.create((b) -> b.group(
-                    CodecUtil.defineFieldUnchecked(CustomCodecs.MEMORY_TO_STATUS_MAP, "entry_condition", GateBehaviorMaker::entryCondition),
+                    CustomCodecs.MEMORY_TO_STATUS_MAP.fieldOf("entry_condition").forGetter(GateBehaviorMaker::entryCondition),
                     CodecUtil.defineFieldUnchecked(CustomCodecs.MEMORY_SET, "exit_erased_memories", GateBehaviorMaker::exitErasedMemories),
                     CodecUtil.defineField(CustomCodecs.ORDER_POLICY, "order_policy", GateBehaviorMaker::orderPolicy),
                     CodecUtil.defineField(CustomCodecs.RUNNING_POLICY, "running_policy", GateBehaviorMaker::runningPolicy),
@@ -158,7 +158,7 @@ public class VanillaBehaviorMakers {
 
     public static final RegistryObject<Codec<GoAndGiveItemsToTargetMaker>> GO_AND_GIVE_ITEMS_TO_TARGET = register("go_and_give_items_to_target",
             () -> RecordCodecBuilder.create((b) -> b.group(
-                    CodecUtil.defineFieldUnchecked(FunctionMaker.DIRECT_CODEC, "target_position_getter", GoAndGiveItemsToTargetMaker::targetPositionGetter),
+                    CodecUtil.defineFieldUnchecked(FunctionMaker.DIRECT_CODEC, "target_position_tracker_getter", GoAndGiveItemsToTargetMaker::targetPositionTrackerGetter),
                     CodecUtil.defineField(Codec.FLOAT, "speed_modifier", GoAndGiveItemsToTargetMaker::speedModifier),
                     CodecUtil.defineField(Codec.INT, "duration", GoAndGiveItemsToTargetMaker::duration)
             ).apply(b, GoAndGiveItemsToTargetMaker::new)));
@@ -200,8 +200,8 @@ public class VanillaBehaviorMakers {
             () -> RecordCodecBuilder.create((b) -> b.group(
                     CodecUtil.defineFieldUnchecked(ForgeRegistries.ENTITY_TYPES.getCodec(), "target_type", InteractWithMaker::targetType),
                     CodecUtil.defineField(Codec.INT, "max_distance", InteractWithMaker::maxDistance),
-                    CodecUtil.defineFieldUnchecked(PredicateMaker.DIRECT_CODEC, "check_self", InteractWithMaker::checkSelf),
-                    CodecUtil.defineFieldUnchecked(PredicateMaker.DIRECT_CODEC, "check_target", InteractWithMaker::checkTarget),
+                    CodecUtil.defineFieldUnchecked(PredicateMaker.DIRECT_CODEC, "self_predicate", InteractWithMaker::selfPredicate),
+                    CodecUtil.defineFieldUnchecked(PredicateMaker.DIRECT_CODEC, "target_predicate", InteractWithMaker::targetPredicate),
                     CodecUtil.defineFieldUnchecked(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec(), "target_memory", InteractWithMaker::targetMemory),
                     CodecUtil.defineField(Codec.FLOAT, "speed_modifier", InteractWithMaker::speedModifier),
                     CodecUtil.defineField(Codec.INT, "close_enough", InteractWithMaker::closeEnough)
@@ -371,11 +371,11 @@ public class VanillaBehaviorMakers {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static final RegistryObject<Codec<PathfinderSetWalkTargetAwayFromMaker>> PATHFINDER_SET_WALK_TARGET_AWAY_FROM = register("pathfinder_set_walk_target_away_from",
             () -> RecordCodecBuilder.create((b) -> b.group(
-                    CodecUtil.defineFieldUnchecked(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec(), "block_memory", PathfinderSetWalkTargetAwayFromMaker::targetMemory),
+                    CodecUtil.defineFieldUnchecked(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec(), "target_memory", PathfinderSetWalkTargetAwayFromMaker::targetMemory),
                     CodecUtil.defineField(Codec.FLOAT, "speed_modifier", PathfinderSetWalkTargetAwayFromMaker::speedModifier),
                     CodecUtil.defineField(Codec.INT, "far_enough", PathfinderSetWalkTargetAwayFromMaker::farEnough),
                     CodecUtil.defineField(Codec.BOOL, "override_walk_target", PathfinderSetWalkTargetAwayFromMaker::overrideWalkTarget),
-                    CodecUtil.defineFieldUnchecked(FunctionMaker.DIRECT_CODEC, "position_getter", PathfinderSetWalkTargetAwayFromMaker::positionGetter)
+                    CodecUtil.defineFieldUnchecked(FunctionMaker.DIRECT_CODEC, "target_position_getter", PathfinderSetWalkTargetAwayFromMaker::targetPositionGetter)
             ).apply(b, PathfinderSetWalkTargetAwayFromMaker::new)));
 
     public static final RegistryObject<Codec<PathfinderStrollAroundPoiMaker>> PATHFINDER_STROLL_AROUND_POI = register("pathfinder_stroll_around_poi",
@@ -439,7 +439,7 @@ public class VanillaBehaviorMakers {
 
     public static final RegistryObject<Codec<RunOneMaker>> RUN_ONE = register("run_one",
             () -> RecordCodecBuilder.create((b) -> b.group(
-                    CodecUtil.defineField(CustomCodecs.MEMORY_TO_STATUS_MAP, "entry_condition", RunOneMaker::entryCondition),
+                    CustomCodecs.MEMORY_TO_STATUS_MAP.fieldOf("entry_condition").forGetter(RunOneMaker::entryCondition),
                     CodecUtil.defineField(CustomCodecs.BEHAVIORS_TO_WEIGHT, "weighted_behaviors", RunOneMaker::weightedBehaviors)
             ).apply(b, RunOneMaker::new)));
 
@@ -512,7 +512,7 @@ public class VanillaBehaviorMakers {
 
     public static final RegistryObject<Codec<StayCloseToTargetMaker>> STAY_CLOSE_TO_TARGET = register("stay_close_to_target",
             () -> RecordCodecBuilder.create((b) -> b.group(
-                    CodecUtil.defineFieldUnchecked(FunctionMaker.DIRECT_CODEC, "position_tracker_getter", StayCloseToTargetMaker::positionTrackerGetter),
+                    CodecUtil.defineFieldUnchecked(FunctionMaker.DIRECT_CODEC, "target_position_tracker_getter", StayCloseToTargetMaker::targetPositionTrackerGetter),
                     CodecUtil.defineField(Codec.INT, "close_enough", StayCloseToTargetMaker::closeEnough),
                     CodecUtil.defineField(Codec.INT, "too_far", StayCloseToTargetMaker::tooFar),
                     CodecUtil.defineField(Codec.FLOAT, "speed_modifier", StayCloseToTargetMaker::speedModifier)

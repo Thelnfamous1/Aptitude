@@ -2,16 +2,15 @@ package com.infamous.aptitude.datagen;
 
 import com.google.common.collect.ImmutableList;
 import com.infamous.aptitude.behavior.BehaviorMaker;
-import com.mojang.datafixers.util.Pair;
+import com.infamous.aptitude.codec.PrioritizedBehavior;
 
 public class DataGenUtil {
-    public static ImmutableList<Pair<String, BehaviorMaker>> createPriorityPairs(int priorityStart, ImmutableList<BehaviorMaker> behaviors) {
+    public static ImmutableList<PrioritizedBehavior> createPriorityPairs(int priorityStart, ImmutableList<BehaviorMaker> behaviors) {
         int priority = priorityStart;
-        ImmutableList.Builder<Pair<String, BehaviorMaker>> builder = ImmutableList.builder();
+        ImmutableList.Builder<PrioritizedBehavior> builder = ImmutableList.builder();
 
         for(BehaviorMaker behavior : behaviors) {
-            builder.add(Pair.of(Integer.toString(priority), behavior));
-            priority++;
+            builder.add(PrioritizedBehavior.of(priority++, behavior));
         }
 
         return builder.build();

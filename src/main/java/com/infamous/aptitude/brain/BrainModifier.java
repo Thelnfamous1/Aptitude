@@ -8,6 +8,7 @@ import net.minecraft.core.RegistryCodecs;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 
 import java.util.function.Function;
@@ -19,7 +20,7 @@ public interface BrainModifier {
     Codec<Holder<BrainModifier>> REFERENCE_CODEC = RegistryFileCodec.create(AptitudeRegistries.Keys.BRAIN_MODIFIERS, DIRECT_CODEC);
 
     Codec<HolderSet<BrainModifier>> LIST_CODEC = RegistryCodecs.homogeneousList(AptitudeRegistries.Keys.BRAIN_MODIFIERS, DIRECT_CODEC);
-    void modify(Holder<EntityType<?>> entityType, Brain<?> brain, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder);
+    void modify(LivingEntity entity, Holder<EntityType<?>> entityType, Brain<?> brain, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder);
 
     Codec<? extends BrainModifier> getCodec();
 

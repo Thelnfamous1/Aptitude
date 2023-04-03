@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.behavior.InteractWith;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 
-public record InteractWithMaker<E extends LivingEntity, T extends LivingEntity>(EntityType<? extends T> targetType, int maxDistance, PredicateMaker<E> checkSelf, PredicateMaker<T> checkTarget, MemoryModuleType<T> targetMemory, float speedModifier, int closeEnough) implements BehaviorMaker {
+public record InteractWithMaker<E extends LivingEntity, T extends LivingEntity>(EntityType<? extends T> targetType, int maxDistance, PredicateMaker<E> selfPredicate, PredicateMaker<T> targetPredicate, MemoryModuleType<T> targetMemory, float speedModifier, int closeEnough) implements BehaviorMaker {
 
 
     public static <T extends LivingEntity> InteractWithMaker<T, T> simple(EntityType<? extends T> targetType, int maxDistance, MemoryModuleType<T> targetMemory, float speedModifier, int closeEnough) {
@@ -20,7 +20,7 @@ public record InteractWithMaker<E extends LivingEntity, T extends LivingEntity>(
 
     @Override
     public BehaviorControl<?> make() {
-        return InteractWith.of(this.targetType, this.maxDistance, this.checkSelf.make(), this.checkTarget.make(), this.targetMemory, this.speedModifier, this.closeEnough);
+        return InteractWith.of(this.targetType, this.maxDistance, this.selfPredicate.make(), this.targetPredicate.make(), this.targetMemory, this.speedModifier, this.closeEnough);
     }
 
     @Override

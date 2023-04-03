@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 public class ModifiableBrainInfo<E extends LivingEntity> {
     @NotNull
@@ -52,9 +51,11 @@ public class ModifiableBrainInfo<E extends LivingEntity> {
     @ApiStatus.Internal
     public void applyBrainModifiers(final E entity, final Brain<?> brain, final List<BrainModifier> brainModifiers)
     {
+        /*
         if (this.modifiedBrainInfo != null)
             throw new IllegalStateException(String.format(Locale.ENGLISH, "Brain for %s already modified", entity));
 
+         */
        Holder<EntityType<?>> entityType = ForgeRegistries.ENTITY_TYPES.getHolder(entity.getType()).get();
 
         ModifiableBrainInfo.BrainInfo<E> original = this.getOriginalBrainInfo();
@@ -63,7 +64,7 @@ public class ModifiableBrainInfo<E extends LivingEntity> {
         {
             for (BrainModifier modifier : brainModifiers)
             {
-                modifier.modify(entityType, brain, phase, builder);
+                modifier.modify(entity, entityType, brain, phase, builder);
             }
         }
         this.modifiedBrainInfo = builder.build();
@@ -81,7 +82,7 @@ public class ModifiableBrainInfo<E extends LivingEntity> {
                 final MemoryTypesBuilder memoriesBuilder = MemoryTypesBuilder.copyOf(original.memoryTypes());
                 final SensorTypesBuilder<E> sensorsBuilder = SensorTypesBuilder.copyOf(original.sensorTypes());
 
-                return new ModifiableBrainInfo.BrainInfo.Builder<E>(
+                return new ModifiableBrainInfo.BrainInfo.Builder<>(
                         memoriesBuilder,
                         sensorsBuilder
                 );

@@ -11,10 +11,10 @@ import net.minecraft.world.entity.ai.behavior.StayCloseToTarget;
 
 import java.util.Optional;
 
-public record StayCloseToTargetMaker(FunctionMaker<LivingEntity, Optional<PositionTracker>> positionTrackerGetter, int closeEnough, int tooFar, float speedModifier) implements BehaviorMaker {
+public record StayCloseToTargetMaker(FunctionMaker<LivingEntity, Optional<PositionTracker>> targetPositionTrackerGetter, int closeEnough, int tooFar, float speedModifier) implements BehaviorMaker {
     @Override
     public BehaviorControl<?> make() {
-        return StayCloseToTarget.create(this.positionTrackerGetter.make(), this.closeEnough, this.tooFar, this.speedModifier);
+        return StayCloseToTarget.create(this.targetPositionTrackerGetter.make(), this.closeEnough, this.tooFar, this.speedModifier);
     }
 
     @Override

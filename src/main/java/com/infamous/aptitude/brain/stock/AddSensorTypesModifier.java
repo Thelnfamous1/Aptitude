@@ -8,12 +8,13 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 
 public record AddSensorTypesModifier(HolderSet<EntityType<?>> entityTypes, HolderSet<SensorType<?>> sensorTypes) implements BrainModifier {
     @Override
-    public void modify(Holder<EntityType<?>> entityType, Brain<?> brain, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder) {
+    public void modify(LivingEntity entity, Holder<EntityType<?>> entityType, Brain<?> brain, Phase phase, ModifiableBrainInfo.BrainInfo.Builder<?> builder) {
         if (phase == Phase.ADD && this.entityTypes.contains(entityType))
         {
             SensorTypesBuilder<?> sensorTypesBuilder = builder.getSensorTypesBuilder();

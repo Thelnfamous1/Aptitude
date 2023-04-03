@@ -11,10 +11,10 @@ import net.minecraft.world.entity.ai.behavior.PositionTracker;
 
 import java.util.Optional;
 
-public record GoAndGiveItemsToTargetMaker(FunctionMaker<LivingEntity, Optional<PositionTracker>> targetPositionGetter, float speedModifier, int duration) implements BehaviorMaker {
+public record GoAndGiveItemsToTargetMaker(FunctionMaker<LivingEntity, Optional<PositionTracker>> targetPositionTrackerGetter, float speedModifier, int duration) implements BehaviorMaker {
     @Override
     public BehaviorControl<?> make() {
-        return new GoAndGiveItemsToTarget<>(this.targetPositionGetter.make(), this.speedModifier, this.duration);
+        return new GoAndGiveItemsToTarget<>(this.targetPositionTrackerGetter.make(), this.speedModifier, this.duration);
     }
 
     @Override

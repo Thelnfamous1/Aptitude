@@ -1,15 +1,20 @@
 package com.infamous.aptitude.util;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 import com.infamous.aptitude.Aptitude;
 import com.infamous.aptitude.brain.BrainModifier;
 import com.infamous.aptitude.brain.ModifiableBrainInfo;
 import com.infamous.aptitude.brain.ModifiableBrainInfoProvider;
 import com.infamous.aptitude.mixin.BrainAccessor;
 import com.infamous.aptitude.registry.AptitudeRegistries;
-import com.mojang.serialization.*;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.MapLike;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
@@ -19,12 +24,14 @@ import net.minecraft.world.entity.ai.memory.ExpirableValue;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.mutable.MutableObject;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class BrainUtil {
 
@@ -74,6 +81,7 @@ public class BrainUtil {
         }
 
         // "re-decode" the last known brain data, using the
+
         ImmutableList<MemoryValue<?>> memoryValues = decodeMemoryValues(NbtOps.INSTANCE, toMapLike(lastKnownBrainData));
 
         for(MemoryValue<?> memoryValue : memoryValues) {
@@ -82,8 +90,8 @@ public class BrainUtil {
     }
 
     private static MapLike<Tag> toMapLike(Dynamic<Tag> lastKnownBrainData) {
-        return NbtOps.INSTANCE
-                .getMap(lastKnownBrainData.getValue())
+        return NbtOps.INSTANCE.getMap(
+                lastKnownBrainData.getElement("memories", new CompoundTag()))
                 .getOrThrow(false, Aptitude.LOGGER::error);
     }
 
@@ -103,6 +111,14 @@ public class BrainUtil {
                 .orElseGet(() -> DataResult.error("No codec for memory: " + memoryType))
                 .flatMap((valueCodec) -> valueCodec.parse(dynamicOps, expirableValue))
                 .map((value) -> new MemoryValue<>(memoryType, Optional.of(value)));
+    }
+
+    public static <E extends LivingEntity> void addToCoreActivities(Brain<E> brain, Set<Activity> toAdd){
+        BrainAccessor<E> brainAccessor = ((BrainAccessor<E>) brain);
+        Set<Activity> coreActivities = Sets.newHashSet();
+        coreActivities.addAll(((BrainAccessor<?>) brain).getCoreActivities());
+        coreActivities.addAll(toAdd);
+        brainAccessor.setCoreActivities(coreActivities);
     }
 
     private record MemoryValue<U>(MemoryModuleType<U> type, Optional<? extends ExpirableValue<U>> value) {

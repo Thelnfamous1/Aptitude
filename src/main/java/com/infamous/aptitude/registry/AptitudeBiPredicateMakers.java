@@ -23,25 +23,25 @@ public class AptitudeBiPredicateMakers {
     public static final DeferredRegister<Codec<? extends BiPredicateMaker<?,?>>> BIPREDICATE_MAKER_SERIALIZERS =
             DeferredRegister.create(AptitudeRegistries.Keys.BIPREDICATE_MAKER_SERIALIZERS_KEY, Aptitude.MODID);
 
-    public static final RegistryObject<Codec<AlwaysFalseBiPredicateMaker<?, ?>>> ALWAYS_FALSE = register("always_false", () ->
-            Codec.unit(AlwaysFalseBiPredicateMaker::new));
-
     public static final RegistryObject<Codec<AllOfBiPredicateMaker<?, ?>>> ALL_OF = register("all_of", () ->
             RecordCodecBuilder.create(builder -> builder.group(
                     CodecUtil.defineFieldUnchecked(CustomCodecs.BIPREDICATE_MAKER_LIST, "bipredicates", AllOfBiPredicateMaker::biPredicates)
             ).apply(builder, AllOfBiPredicateMaker::new)));
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static final RegistryObject<Codec<NegateBiPredicateMaker>> NEGATE = register("negate", () ->
-            RecordCodecBuilder.create(builder -> builder.group(
-                    CodecUtil.defineFieldUnchecked(BiPredicateMaker.DIRECT_CODEC, "bipredicate", NegateBiPredicateMaker::biPredicate)
-            ).apply(builder, NegateBiPredicateMaker::new)));
+    public static final RegistryObject<Codec<AlwaysFalseBiPredicateMaker<?, ?>>> ALWAYS_FALSE = register("always_false", () ->
+            Codec.unit(AlwaysFalseBiPredicateMaker::new));
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static final RegistryObject<Codec<EntityIsValueMemoryValue>> ENTITY_IS_VALUE_MEMORY_VALUE = register("entity_is_value_memory_value", () ->
             RecordCodecBuilder.create(builder -> builder.group(
                     CodecUtil.defineFieldUnchecked(ForgeRegistries.MEMORY_MODULE_TYPES.getCodec(), "memory", EntityIsValueMemoryValue::memory)
             ).apply(builder, EntityIsValueMemoryValue::new)));
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static final RegistryObject<Codec<NegateBiPredicateMaker>> NEGATE = register("negate", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    CodecUtil.defineFieldUnchecked(BiPredicateMaker.DIRECT_CODEC, "bipredicate", NegateBiPredicateMaker::biPredicate)
+            ).apply(builder, NegateBiPredicateMaker::new)));
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static final RegistryObject<Codec<OptionalResultOfFirstIsSecond>> OPTIONAL_RESULT_OF_FIRST_IS_SECOND = register("optional_result_of_first_is_second", () ->
